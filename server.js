@@ -12,6 +12,11 @@ app.get('/', (req, res) => {
   res.send('API is running! 🚀');
 });
 
+//api
+app.get('/api', (req, res) => {
+  res.send('kamu dapet api!');
+});
+
 // Routes
 app.use(routes);
 
