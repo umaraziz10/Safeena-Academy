@@ -12,11 +12,6 @@ app.get('/', (req, res) => {
   res.send('API is running! 🚀');
 });
 
-//api
-app.get('/api', (req, res) => {
-  res.send('kamu dapet api!');
-});
-
 // Routes
 app.use(routes);
 
@@ -36,7 +31,7 @@ app.use((err, req, res, next) => {
 });
 
 // Server listen
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3008; //INI AWALNYA 3000
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} 🚀`);
 });

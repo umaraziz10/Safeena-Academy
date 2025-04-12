@@ -40,9 +40,9 @@ exports.login = async (req, res) => {
     }
 
     // Cek apakah email sudah diverifikasi
-    if (!user.isVerified) {
-      return res.status(403).json({ message: 'Please verify your email before logging in' });
-    }
+    // if (!user.isVerified) {
+    //   return res.status(403).json({ message: 'Please verify your email before logging in' });
+    // }
 
     // Bandingkan password
     const isMatch = await bcrypt.compare(password, user.password);
