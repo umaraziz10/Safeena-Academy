@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../Component/accordion';
+import FallingLeaves from "../Component/falling-leaves"
 import { Box } from '../Component/Box';
 import { Footer } from '../Component/Footer';
 
@@ -53,7 +54,9 @@ const Index = (): JSX.Element => {
   ];
 
   return (
+    
     <div
+    
       className='flex flex-row justify-center w-full'
       style={{
         position: 'absolute',
@@ -62,7 +65,9 @@ const Index = (): JSX.Element => {
           'linear-gradient(140.63deg, #FFFFFF 0%, #AABFD3 72.78%, #337BBF 96.96%)',
       }}
     >
+      
       <div className='overflow-hidden w-full relative'>
+        
         {/* Hero Section */}
         <section className='w-full max-w-[1070px] mt-[100px] md:mt-[223px] mx-auto text-center px-4'>
           <h1 className='font-bold text-4xl md:text-[64px] leading-[normal]'>

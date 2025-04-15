@@ -2,7 +2,7 @@ import React from "react";
 
 export const Footer = (): JSX.Element => {
   return (
-    <footer className="mt-[40px] md:mt-[80px] py-[20px] z-50 px-4 md:px-6">
+    <footer className="sticky bottom  py-[20px] z-50 px-4 md:px-6">
       <div className="max-w-[1357px] mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-0 z-50">
         <div className="flex items-center">
           <img

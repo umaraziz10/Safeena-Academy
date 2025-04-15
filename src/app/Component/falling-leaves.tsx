@@ -58,7 +58,7 @@ export default function FallingLeaves() {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height * -1 - 100, // Start above the canvas
         size: Math.random() * 15 + 10,
-        speed: Math.random() * 1 + 0.5,
+        speed: Math.random() * 1 + 0.1,
         rotation: Math.random() * Math.PI * 2,
         rotationSpeed: (Math.random() - 0.5) * 0.01,
         color: colors[Math.floor(Math.random() * colors.length)],
