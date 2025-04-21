@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Course.associate = function(models) {
         Course.belongsToMany(models.User, { through: models.Enrollment, foreignKey: 'courseId' });
+        Course.hasMany(models.Question, { foreignKey: 'courseId' });
+        Course.hasMany(models.Submission, { foreignKey: 'courseId' });
       };
       
     }

@@ -1,20 +1,24 @@
-const { verifyToken } = require('../helpers/jwt');
+const jwt = require('jsonwebtoken');
 
-function authenticate(req, res, next) {
-  const { authorization } = req.headers;
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
 
-  if (!authorization) {
-    return res.status(401).json({ message: 'Token is required' });
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
   }
 
   try {
-    const token = authorization.split(' ')[1];
-    const payload = verifyToken(token);
-    req.user = payload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // simpan data user
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
+    return res.status(403).json({ message: 'Invalid token' });
   }
-}
+  console.log('🔐 Token received:', token);
+console.log('🔐 JWT_SECRET used:', process.env.JWT_SECRET);
+};
 
-module.exports = { authenticate };
+
+
+
+module.exports = authMiddleware;
