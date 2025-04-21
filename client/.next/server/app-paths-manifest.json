@@ -1,0 +1,6 @@
+{
+  "/Educational/Quiz/page": "app/Educational/Quiz/page.js",
+  "/Educational/Courses/page": "app/Educational/Courses/page.js",
+  "/Educational/Learning/page": "app/Educational/Learning/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
+}
