@@ -4,22 +4,21 @@ const router = express.Router();
 const consultationRoutes = require('./consultationRoutes');
 const userRoutes = require('./user');
 const authRoutes = require('./authRoutes');
-const quizRoutes = require("./quizRoutes");
+const quizRoutes = require('./quizRoutes');
 const courseRoutes = require('./courseRoutes');
-// const psychologistRoutes = require('./psychologistRoutes');
+const materialsRoutes = require('./materialRoutes');
+// const psychologistRoutes = require('./psychologistRoutes'); // Uncomment if needed
 
-// Rute otentikasi
+// Authentication
 router.use('/auth', authRoutes);
 
-// Rute utama (opsional, tergantung struktur)
-router.use('/', authRoutes);
-
-// Rute-rute lainnya
-router.use('/courses', courseRoutes);
+// Feature routes
 router.use('/consultations', consultationRoutes);
 router.use('/users', userRoutes);
+router.use('/courses', courseRoutes);
+router.use('/materials', materialsRoutes);
 router.use('/quiz', quizRoutes);
 
-// router.use('/psychologists', psychologistRoutes); // uncomment jika dibutuhkan
+// router.use('/psychologists', psychologistRoutes); // Uncomment if needed
 
 module.exports = router;

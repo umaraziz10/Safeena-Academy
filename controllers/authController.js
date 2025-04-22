@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const sendEmail = require('../helpers/sendEmail');
 
-
-
 exports.register = async (req, res) => {
     const { name, email, password, role } = req.body;
   
@@ -67,6 +65,9 @@ exports.login = async (req, res) => {
     }
 
     // Cek apakah email sudah diverifikasi
+    if (!user.isVerified) {
+      return res.status(403).json({ message: 'Please verify your email before logging in' });
+    }
     // if (!user.isVerified) {
     //   return res.status(403).json({ message: 'Please verify your email before logging in' });
     // }
@@ -77,8 +78,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
 
     res.json({ message: 'Login successful', token });
