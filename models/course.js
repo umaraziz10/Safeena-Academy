@@ -29,12 +29,16 @@
 
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Course extends Model {
     static associate(models) {
-      // no associations for now
+      Course.belongsToMany(models.User, { through: models.Enrollment, foreignKey: 'courseId' });
+      Course.hasMany(models.Question, { foreignKey: 'courseId' });
+      Course.hasMany(models.Submission, { foreignKey: 'courseId' });
     }
   }
+
   Course.init({
     title: DataTypes.STRING,
     description: DataTypes.TEXT
@@ -42,5 +46,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Course',
   });
+
   return Course;
 };
