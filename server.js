@@ -37,6 +37,7 @@
 // });
 
 require('dotenv').config(); // pastikan ini paling atas
+
 const express = require('express');
 const app = express();
 const routes = require('./routes');
@@ -70,10 +71,10 @@ app.use((err, req, res, next) => {
 // Test connection to database
 sequelize.authenticate()
   .then(() => {
-    console.log('✅ Database connected!');
+    console.log('Database connected ✅');
   })
   .catch(err => {
-    console.error('❌ Database connection error:', err);
+    console.error('Database connection error ❌:', err);
   });
 
 // Server listen
