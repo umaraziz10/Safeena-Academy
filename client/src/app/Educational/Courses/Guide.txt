@@ -1,3 +1,0 @@
-Apabila ingin melihat page ketik 
-
-localhost:3000/Educational/Courses
