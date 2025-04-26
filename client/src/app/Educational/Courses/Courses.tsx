@@ -10,7 +10,9 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import Navbar from '@/app/Component/navbar';
 import { Footer } from '@/app/Component/Footer';
+import { useParams } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'
+import { fetchWithToken } from "@/lib/fetchWithToken";
 import Link from 'next/link';  // Import Link from Next.js
 
 // Course content data
@@ -93,6 +95,7 @@ interface Material {
 }
 
 export const CoursePage = (): JSX.Element => {
+  const { id } = useParams();
   const searchParams = useSearchParams();
 
   const [courseTitle, setCourseTitle] = useState('');
@@ -100,10 +103,10 @@ export const CoursePage = (): JSX.Element => {
   const [groupedMaterials, setGroupedMaterials] = useState<Record<number, Material[]>>({});
 
   useEffect(() => {
-    const courseId = searchParams.get('course_id');
+    // const courseId = searchParams.get('course_id');
 
     // Ambil data course
-    fetch(`http://localhost:5000/courses/${courseId}`)
+    fetchWithToken(`/courses/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setCourseTitle(data.title);
@@ -111,7 +114,7 @@ export const CoursePage = (): JSX.Element => {
       });
 
     // Ambil data materials
-    fetch(`http://localhost:5000/materials/course/${courseId}`)
+    fetchWithToken(`/materials/course/${id}`)
       .then((res) => res.json())
       .then((data: Material[]) => {
         // Group by week

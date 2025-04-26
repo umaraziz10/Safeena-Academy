@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/Material/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/Material/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -16,25 +16,40 @@
       "static/chunks/main-app.js",
       "static/chunks/app/Login/page.js"
     ],
-    "/LandingPage/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/LandingPage/page.js"
+      "static/chunks/app/page.js"
     ],
     "/Educational/Courses/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/Educational/Courses/page.js"
     ],
+    "/Educational/Courses/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/Educational/Courses/[id]/page.js"
+    ],
+    "/Material/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/Material/[id]/page.js"
+    ],
     "/Educational/Learning/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/Educational/Learning/page.js"
     ],
-    "/Educational/Quiz/page": [
+    "/Educational/Learning/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/Educational/Quiz/page.js"
+      "static/chunks/app/Educational/Learning/[id]/page.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

@@ -5,19 +5,18 @@ const authMiddleware = require('../middlewares/authMiddleware'); // kalau pakai 
 const { authorizeRole } = require('../middlewares/authorizeRole'); // kalau mau role-based
 
 // GET semua materials
-// router.get('/', authMiddleware, materialController.getAllMaterials);
-router.get('/', materialController.getAllMaterials);
+router.get('/', authMiddleware, materialController.getAllMaterials);
+// router.get('/', materialController.getAllMaterials);
 
 
 // GET material by ID
-// router.get('/:id', authMiddleware, materialController.getMaterialById);
-router.get('/:id', materialController.getMaterialById);
+router.get('/:id', authMiddleware, materialController.getMaterialById);
+// router.get('/:id', materialController.getMaterialById);
 
 
 // GET material-> course by ID
-// router.get('/course/:courseId', authMiddleware, materialController.getMaterialsByCourseId);
-router.get('/course/:courseId', materialController.getMaterialsByCourseId);
-
+router.get('/course/:courseId', authMiddleware, materialController.getMaterialsByCourseId);
+// router.get('/course/:courseId', materialController.getMaterialsByCourseId);
 
 // POST create material (Admin & Teacher)
 router.post('/', authMiddleware, authorizeRole(['admin', 'teacher']), materialController.createMaterial);

@@ -5,7 +5,7 @@ const validateCreateConsultation = [
     .notEmpty().withMessage('Consultation date is required')
     .isISO8601().withMessage('Invalid date format'),
 
-  // ✅ Middleware ke-2 HARUS function
+  // Middleware ke-2 HARUS function
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

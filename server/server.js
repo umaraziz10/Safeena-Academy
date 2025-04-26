@@ -1,41 +1,3 @@
-// const express = require('express');
-// const app = express();
-// const routes = require('./routes');
-// const { sequelize } = require('./models');
-
-// // Middleware
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-// // Root route
-// app.get('/', (req, res) => {
-//   res.send('API is running! 🚀');
-// });
-
-// // Routes
-// app.use(routes);
-
-// // Test connection to database
-// sequelize.authenticate()
-//   .then(() => {
-//     console.log('Database connected ✅');
-//   })
-//   .catch(err => {
-//     console.error('Database connection error ❌:', err);
-//   });
-
-// // Global error handler (optional)
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send('Something broke!');
-// });
-
-// // Server listen
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT} 🚀`);
-// });
-
 require('dotenv').config(); // pastikan ini paling atas
 
 const express = require('express');
@@ -44,18 +6,15 @@ const routes = require('./routes');
 const { sequelize } = require('./models');
 const materialRoutes = require('./routes/materialRoutes');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 
 // Middleware
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/materials', materialRoutes);
-app.use(cors(
-  {
-    origin: 'http://localhost:3000',
-    credentials: true
-  }
-))
+app.use(cookieParser());
 
 // Root route
 app.get('/', (req, res) => {

@@ -7,7 +7,7 @@ const authRoutes = require('./authRoutes');
 const quizRoutes = require('./quizRoutes');
 const courseRoutes = require('./courseRoutes');
 const materialsRoutes = require('./materialRoutes');
-// const psychologistRoutes = require('./psychologistRoutes'); // Uncomment if needed
+// const psychologistRoutes = require('./psychologistRoutes');
 
 // Authentication
 router.use('/auth', authRoutes);
@@ -18,7 +18,6 @@ router.use('/users', userRoutes);
 router.use('/courses', courseRoutes);
 router.use('/materials', materialsRoutes);
 router.use('/quiz', quizRoutes);
-
-// router.use('/psychologists', psychologistRoutes); // Uncomment if needed
+// router.use('/psychologists', psychologistRoutes);
 
 module.exports = router;

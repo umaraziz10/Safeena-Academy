@@ -7,58 +7,51 @@ import { Card, CardContent } from '@/app/Component/card';
 import { Footer } from '@/app/Component/Footer';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { fetchWithToken } from '@/lib/fetchWithToken';
+import { set } from 'react-hook-form';
 
 
 export const CoursePage = (): JSX.Element => {
-  const searchParams = useSearchParams();
+  const { id } = useParams();
+  
+  const [courseTitle, setCourseTitle] = useState('');
+  const [materialTitle, setMaterialTitle] = useState('');
+  const [materialDesc, setMaterialDesc] = useState('');
+  const [materialVideo, setMaterialVideo] = useState('');
+  const [loading, setLoading] = useState(true);
+
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const playerRef = useRef<ReactPlayer>(null);
 
-  const [courseTitle, setCourseTitle] = useState('');
-  const [materialTitle, setMaterialTitle] = useState('');
-  const [materialDesc, setMaterialDesc] = useState('');
-  const [materialLink, setMaterialLink] = useState('');
-
   useEffect(() => {
-      // const token = document.cookie
-      // .split('; ')
-      // .find(row => row.startsWith('token='))
-      // ?.split('=')[1];
-
-      const courseId = searchParams.get('course_id');
-  
-      // Ambil data course
-
-      fetch(`http://localhost:5000/materials/${courseId}`)
-        .then((res) => res.json())
+      setLoading(true);
+      fetchWithToken(`/materials/${id}`)
+        .then((res) => {
+          return res.json();
+        })
         .then((data) => {
           setMaterialTitle(data.materials_title);
           setMaterialDesc(data.materials_desc);
           setCourseTitle(data.course.title);
-          setMaterialLink(data.materials_video);
+          setMaterialVideo(data.materials_video);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
         });
-
-      // if (token){
-      //   fetch(`http://localhost:5000/materials/${courseId}`,{
-      //     method: 'GET',
-      //     headers: {
-      //       'Authorization': token
-      //     },
-      //     credentials: 'include'
-      //   })
-      //     .then((res) => res.json())
-      //     .then((data) => {
-      //       setMaterialTitle(data.materials_title);
-      //       setMaterialDesc(data.materials_desc);
-      //       setCourseTitle(data.course.title);
-      //       setMaterialLink(data.materials_video);
-      //     });
-      // }
-  
       }, []);
-
+  
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <img src="/loading.gif" alt="Loading..." className="w-48 h-48 animate-spin" />
+      </div>
+    );
+  }
   const handlePlayPause = () => {
     setPlaying(!playing);
   };
@@ -86,10 +79,6 @@ export const CoursePage = (): JSX.Element => {
     return `${pad(minutes)}:${pad(remainingSeconds)}`;
   };
 
-  const youtubeUrl = '{https://youtu.be/RPyzPH8sB2A?si=d_9lrjEieyFGYD-E}';
-  // const youtubeUrl = {materialLink};
-
-
   return (
     <>
       {/* Background Gradient */}
@@ -107,10 +96,9 @@ export const CoursePage = (): JSX.Element => {
             {/* Course Title */}
             <header className='space-y-2'>
               <h1 className='text-3xl sm:text-4xl lg:text-5xl font-outfit tracking-tight'>
-                <span className='font-bold text-[#334fb4]'>{courseTitle}Anxiety Disorders : </span>
+                <span className='font-bold text-[#334fb4]'>{courseTitle} : </span>
                 <span className='text-[#65b4ff] ml-2 font-semibold'>
                   {materialTitle}
-                  Fight/Flight/Freeze Response: Anxiety Skills #1
                 </span>
               </h1>
             </header>
@@ -121,7 +109,7 @@ export const CoursePage = (): JSX.Element => {
                 <div className='relative aspect-video'>
                   <ReactPlayer
                     ref={playerRef}
-                    url={youtubeUrl}
+                    url={materialVideo}
                     width='100%'
                     height='100%'
                     playing={playing}
@@ -196,14 +184,10 @@ export const CoursePage = (): JSX.Element => {
             <section className='space-y-6 bg-white/20 backdrop-blur-sm rounded-xl p-6 sm:p-8'>
               <h2 className='text-2xl sm:text-3xl lg:text-4xl font-bold text-[#334fb4] font-outfit'>
                 {materialTitle}
-                Fight/Flight/Freeze Response: Anxiety Skills #1
               </h2>
               <div className='prose prose-lg max-w-none'>
                 <p className='text-base sm:text-lg text-[#120000] font-outfit leading-relaxed'>
                   {materialDesc}
-                </p>
-                <p className='text-base sm:text-lg text-[#120000] font-outfit leading-relaxed mt-4'>
-                  Modul ini membahas reaksi fisiologis yang terjadi pada tubuh manusia ketika mengalami kecemasan atau stres, yang dikenal dengan respons "Fight, Flight, Freeze" (Lawan, Lari, Beku). Dalam situasi yang menegangkan, tubuh kita secara otomatis merespon untuk mempersiapkan diri menghadapi ancaman. Modul ini akan mengajak peserta untuk memahami mekanisme tersebut dan memberikan keterampilan serta teknik untuk mengelola kecemasan yang disebabkan oleh respons tubuh ini.
                 </p>
               </div>
             </section>

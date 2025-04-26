@@ -1,8 +1,8 @@
 {
-  "/page": "app/page.js",
-  "/Login/page": "app/Login/page.js",
-  "/LandingPage/page": "app/LandingPage/page.js",
-  "/Educational/Courses/page": "app/Educational/Courses/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/Material/page": "app/Material/page.js",
   "/Educational/Learning/page": "app/Educational/Learning/page.js",
-  "/Educational/Quiz/page": "app/Educational/Quiz/page.js"
+  "/Educational/Learning/[id]/page": "app/Educational/Learning/[id]/page.js",
+  "/Login/page": "app/Login/page.js",
+  "/page": "app/page.js"
 }

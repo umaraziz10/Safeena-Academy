@@ -55,7 +55,6 @@ export default function Navbar() {
   }, [isOpen]);
 
   useEffect(() => {
-    // Periksa apakah token ada di localStorage atau sessionStorage
     const token = Cookies.get("token");
     if (token) {
       setIsLoggedIn(true);

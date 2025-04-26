@@ -1,4 +1,4 @@
-// File: /home/umaru/Documents/temp2-Safeena_Academy/client/src/app/Educational/Courses/page.tsx
+// File: /home/umaru/Documents/GitHub/Safeena-Academy/client/src/app/Educational/Courses/page.tsx
 import * as entry from '../../../../../src/app/Educational/Courses/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
