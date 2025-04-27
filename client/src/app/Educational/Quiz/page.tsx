@@ -1,5 +1,3 @@
-// pages/index.tsx
-
 import React from 'react';
 import QuizPage from './Quiz';
 import Navbar from '../Component/navbar';

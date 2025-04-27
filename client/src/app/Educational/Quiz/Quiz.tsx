@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useTimer } from "./Ts/useTimer";
 import { useToast } from "./Ts/use-toast";
-import { useSearchParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { fetchWithToken } from "@/lib/fetchWithToken";
 import Link from "next/link";
 
 type Option = {
@@ -31,9 +32,10 @@ function App() {
     "5": "",
   });
 
+  const { id } = useParams();
+
   const handleSubmit = async () => {
-    const courseId = searchParams.get('course_id');
-    if (!courseId) {
+    if (!id) {
       alert("Course ID tidak ditemukan");
       return;
     }
@@ -47,11 +49,11 @@ function App() {
     const payload = {
       userId: 1, // Ganti sesuai ID user login
       answers: answerArray,
-      courseId: parseInt(courseId),
+      courseId: id,
     };
   
     try {
-      const response = await fetch("http://localhost:5000/quiz/submit", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/quiz/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -94,13 +96,10 @@ function App() {
     }));
   };
 
-  const searchParams = useSearchParams();
-  // UseEffect untuk melakukan fetch data kuiz
   useEffect(() => {
-    const courseId = searchParams.get('course_id');
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/quiz/${courseId}`);
+        const response = await fetchWithToken(`/quiz/${id}`);
   
         if (!response.ok) {
           console.error("Failed to fetch questions");
