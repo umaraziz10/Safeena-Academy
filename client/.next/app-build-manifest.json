@@ -16,15 +16,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/Login/page.js"
     ],
-    "/Educational/Quiz/[id]/page": [
+    "/Educational/Courses/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/Educational/Quiz/[id]/page.js"
+      "static/chunks/app/Educational/Courses/page.js"
     ],
-    "/Educational/Learning/[id]/page": [
+    "/Educational/Courses/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/Educational/Learning/[id]/page.js"
+      "static/chunks/app/Educational/Courses/[id]/page.js"
     ]
   }
 }
