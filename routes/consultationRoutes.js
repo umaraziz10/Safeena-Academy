@@ -4,7 +4,6 @@ const consultationController = require('../controllers/consultationController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const validate = require('../middlewares/validateConsultation');
 
-
 router.post(
   '/',
   authMiddleware,
