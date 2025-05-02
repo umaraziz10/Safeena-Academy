@@ -4,7 +4,11 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert('Materials', [
       {
+<<<<<<< HEAD
         course_id: 27,
+=======
+        course_id: 1,
+>>>>>>> Chatbot-ConsumeAPI
         week: 1,
         materials_title: 'Introduction to Programming',
         materials_desc: 'This material covers the basics of programming.',
@@ -15,7 +19,11 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+<<<<<<< HEAD
         course_id: 27,
+=======
+        course_id: 1,
+>>>>>>> Chatbot-ConsumeAPI
         week: 2,
         materials_title: 'Variables and Data Types',
         materials_desc: 'Learn about variables, data types, and how to use them.',

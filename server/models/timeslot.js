@@ -13,10 +13,15 @@ module.exports = (sequelize, DataTypes) => {
       TimeSlot.belongsToMany(models.Psychologist, {
         through: models.PsychologistTimeSlot,
         foreignKey: 'time_slot_id',
+<<<<<<< HEAD
         otherKey: 'psychologist_id',
         as: 'psychologists' // alias kebalikannya
       });
       
+=======
+        as: 'available_psychologists'
+      });
+>>>>>>> Chatbot-ConsumeAPI
     }
     
   }
