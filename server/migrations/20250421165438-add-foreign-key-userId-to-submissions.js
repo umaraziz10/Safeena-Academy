@@ -1,14 +1,17 @@
+// 
+
 'use strict';
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Menambahkan foreign key userId di tabel Submissions
-    await queryInterface.addColumn('Submissions', 'userId', {
-      type: Sequelize.INTEGER,
-      allowNull: false,
+    // Tambahkan constraint foreign key ke kolom userId yang sudah ada
+    await queryInterface.addConstraint('Submissions', {
+      fields: ['userId'],
+      type: 'foreign key',
+      name: 'fk_submissions_userId',  // kasih nama unik
       references: {
-        model: 'Users',  // Menghubungkan ke model Users
-        key: 'id',       // Menghubungkan ke kolom id di Users
+        table: 'Users',
+        field: 'id',
       },
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
@@ -16,7 +19,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    // Menghapus kolom userId jika migrasi dibatalkan
-    await queryInterface.removeColumn('Submissions', 'userId');
+    // Hapus constraint foreign key jika rollback
+    await queryInterface.removeConstraint('Submissions', 'fk_submissions_userId');
   }
 };

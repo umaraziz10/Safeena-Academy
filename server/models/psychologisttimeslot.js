@@ -11,19 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       PsychologistTimeSlot.belongsTo(models.Psychologist, {
-<<<<<<< HEAD
         foreignKey: 'psychologist_id',
         as: 'Psychologist'
       });
       PsychologistTimeSlot.belongsTo(models.TimeSlot, {
         foreignKey: 'time_slot_id',
         as: 'TimeSlot'
-=======
-        foreignKey: 'psychologist_id'
-      });
-      PsychologistTimeSlot.belongsTo(models.TimeSlot, {
-        foreignKey: 'time_slot_id'
->>>>>>> Chatbot-ConsumeAPI
       });
     }
     

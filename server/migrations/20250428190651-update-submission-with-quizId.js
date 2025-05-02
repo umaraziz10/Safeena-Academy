@@ -10,7 +10,7 @@ module.exports = {
       type: Sequelize.INTEGER,
       allowNull: false,
       references: {
-        model: 'quiz',  // Menghubungkan ke tabel quiz
+        model: 'Quiz',  // Menghubungkan ke tabel quiz
         key: 'id',
       },
       onDelete: 'CASCADE',

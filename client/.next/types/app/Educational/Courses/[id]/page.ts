@@ -1,8 +1,8 @@
-// File: C:\Users\dylan\OneDrive\Documents\UNPAD\Informatics Term VI\PPL 1\Safeena-Academy\client\src\app\Educational\Learning\[id]\page.tsx
-import * as entry from '../../../../../../src/app/Educational/Learning/[id]/page.js'
+// File: /home/umaru/Documents/GitHub/Safeena-Academy/client/src/app/Educational/Courses/[id]/page.tsx
+import * as entry from '../../../../../../src/app/Educational/Courses/[id]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-type TEntry = typeof import('../../../../../../src/app/Educational/Learning/[id]/page.js')
+type TEntry = typeof import('../../../../../../src/app/Educational/Courses/[id]/page.js')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{

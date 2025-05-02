@@ -12,12 +12,8 @@ module.exports = (sequelize, DataTypes) => {
         Psychologist.belongsToMany(models.TimeSlot, {
           through: models.PsychologistTimeSlot,
           foreignKey: 'psychologist_id',
-<<<<<<< HEAD
           otherKey: 'time_slot_id',
           as: 'timeSlots' // <- tambahkan alias
-=======
-          as: 'available_slots'
->>>>>>> Chatbot-ConsumeAPI
         });
       }      
   }

@@ -2,15 +2,15 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('quiz', [
+    await queryInterface.bulkInsert('Quiz', [
       {
-        courseId: 1,  // Pastikan courseId 1 ada di tabel Courses
+        courseId: 6,  // Pastikan courseId 1 ada di tabel Courses
         duration: 300,  // Durasi quiz dalam detik (300 detik = 5 menit)
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        courseId: 2,  // Pastikan courseId 2 ada di tabel Courses
+        courseId: 5,  // Pastikan courseId 2 ada di tabel Courses
         duration: 600,  // Durasi quiz dalam detik (600 detik = 10 menit)
         createdAt: new Date(),
         updatedAt: new Date(),

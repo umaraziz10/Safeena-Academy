@@ -21,7 +21,7 @@ module.exports = {
       },
       {
         title: 'Anxiety Disorders',
-        description: 'Anxiety Disorders adalah kelompok gangguan mental yang ditandai dengan rasa cemas atau takut yang berlebihan dan berlangsung dalam jangka waktu lama. Perasaan ini bisa muncul tanpa sebab yang jelas atau dipicu oleh situasi tertentu, dan dapat mengganggu aktivitas sehari-hari seperti bekerja, belajar, atau berinteraksi sosial. Beberapa jenis gangguan kecemasan yang umum meliputi Generalized Anxiety Disorder (GAD), Panic Disorder, Social Anxiety Disorder, dan Fobia Spesifik.',
+        description: 'Anxiety Disorders adalah kelompok gangguan mental yang ditandai dengan rasa cemas atau takut yang berlebihan dan berlangsung dalam jangka waktu lama.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
