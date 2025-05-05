@@ -4,55 +4,119 @@ const bcrypt = require('bcrypt');
 const sendEmail = require('../helpers/sendEmail');
 
 exports.register = async (req, res) => {
-    const { name, email, password, role } = req.body;
-  
-    try {
-      // Cek apakah email sudah terdaftar
-      const existingUser = await User.findOne({ where: { email } });
-      if (existingUser) {
-        return res.status(400).json({ message: 'Email already registered' });
-      }
-  
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      // Simpan user baru
-      const newUser = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-        role: role || 'student',
-        isVerified: false
-      });
-  
-      // Generate token verifikasi
-      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-  
-      // Kirim email verifikasi
-      await sendEmail(
-        email,
-        'Verify your email',
-        `Hello,
-  
-  Thank you for registering at Safeena Academy!
-  
-  Please click the link below to verify your email:
-  
-  http://localhost:5000/auth/verify?token=${token}
-  
-  If you did not register, please ignore this email.
-  
-  Best regards,
-  Safeena Academy Team`
-      );
-  
-      res.status(201).json({ message: 'User registered successfully. Please check your email to verify your account.' });
-    } catch (error) {
-      console.error('❌ Error in register controller:', error);
-      res.status(500).json({ message: 'Server error', error: error.message });
+  const { name, email, password, role } = req.body;
+
+  try {
+    // Cek apakah email sudah terdaftar
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
     }
-  };
-  
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Simpan user baru
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: role || 'student',
+      isVerified: false
+    });
+
+    // Generate token verifikasi
+    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Kirim email verifikasi dengan tampilan HTML
+    const htmlContent = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f9f9f9;
+              color: #333;
+              margin: 0;
+              padding: 0;
+            }
+            .container {
+              width: 100%;
+              max-width: 600px;
+              margin: 20px auto;
+              padding: 20px;
+              background-color: #ffffff;
+              border-radius: 8px;
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+              text-align: center;
+              padding: 15px;
+              background-color: #337bbf;
+              color: #fff;
+              border-radius: 8px 8px 0 0;
+            }
+            h1 {
+              font-size: 24px;
+              margin: 0;
+            }
+            p {
+              font-size: 16px;
+              line-height: 1.5;
+              margin: 10px 0;
+            }
+            .btn {
+              display: inline-block;
+              background-color: #337bbf;
+              color: #fff;
+              padding: 12px 20px;
+              text-decoration: none;
+              border-radius: 5px;
+              text-align: center;
+              font-weight: bold;
+              margin-top: 20px;
+            }
+            .footer {
+              text-align: center;
+              font-size: 12px;
+              color: #777;
+              margin-top: 30px;
+            }
+            .footer a {
+              color: #337bbf;
+              text-decoration: none;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Email Verification</h1>
+            </div>
+            <div class="content">
+              <p>Hello,</p>
+              <p>Thank you for registering at Safeena Academy!</p>
+              <p>Please click the button below to verify your email address and complete your registration:</p>
+              <a href="http://localhost:5000/auth/verify?token=${token}" class="btn" style="color: #ffffff">Verify Your Email</a>
+            </div>
+            <div class="footer">
+              <p>If you did not register for Safeena Academy, please ignore this email.</p>
+              <p>Best regards,<br/>Safeena Academy Team</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    // Kirim email
+    await sendEmail(email, 'Verify your email', 'Please verify your email.', htmlContent);
+
+    res.status(201).json({ message: 'User registered successfully. Please check your email to verify your account.' });
+  } catch (error) {
+    console.error('❌ Error in register controller:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};  
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;

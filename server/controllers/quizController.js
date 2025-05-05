@@ -1,46 +1,46 @@
 const db = require("../models");
 
-// Mengambil soal dan durasi berdasarkan quizId
+// Mengambil soal berdasarkan quizId dan durasi dari kuis
 exports.getQuestions = async (req, res) => {
-  const { quizId } = req.params;
+  const { quizId } = req.params;  // Mengambil quizId dari URL parameter
 
   try {
-    // Ambil soal berdasarkan quizId
-    const questions = await db.Question.findAll({
-      where: { quizId },
-      attributes: ['id', 'text', 'options', 'correctIndex', 'quizId', 'createdAt', 'updatedAt']  // Perbarui field
-    });
-
-    // Ambil durasi dari quiz
+    // Ambil durasi kuis berdasarkan quizId
     const quiz = await db.Quiz.findOne({
       where: { id: quizId },
-      attributes: ['duration'],  // Hanya mengambil durasi quiz
+      attributes: ['duration'],  // Ambil durasi saja
     });
 
-    // Pastikan soal ada untuk quizId yang diberikan
-    if (!questions || questions.length === 0) {
-      return res.status(404).json({ message: "No questions found for this quiz." });
-    }
-
-    // Pastikan quiz ditemukan
+    // Pastikan kuis ditemukan
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found." });
     }
 
-    // Menambahkan durasi ke response soal
+    // Ambil soal berdasarkan quizId
+    const questions = await db.Question.findAll({
+      where: { quizId },
+      attributes: ['id', 'text', 'correctIndex', 'options'],  // Ambil kolom soal yang diperlukan
+    });
+
+    // Pastikan ada soal untuk quizId yang diberikan
+    if (!questions || questions.length === 0) {
+      return res.status(404).json({ message: "No questions found for this quiz." });
+    }
+
+    // Kembalikan soal dan durasi dalam response
     res.json({
-      quizId,
-      duration: quiz.duration,  // Menambahkan durasi quiz
-      questions
+      message: "Questions retrieved successfully",
+      quizDuration: quiz.duration,  // Mengirimkan durasi kuis
+      questions: questions,         // Mengirimkan soal yang ditemukan
     });
   } catch (error) {
-    console.error(error);
+    console.error(error);  // Menambahkan log untuk melihat error lebih detail
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
 
-//Menyimpan Submission
+// Menyimpan submission siswa
 exports.submitExam = async (req, res) => {
   const { userId, answers, quizId } = req.body;
 
@@ -53,7 +53,7 @@ exports.submitExam = async (req, res) => {
     // Ambil soal berdasarkan quizId
     const questions = await db.Question.findAll({
       where: { quizId },
-      attributes: ['id', 'text', 'correctIndex', 'options']  // Ambil kolom yang diperlukan
+      attributes: ['id', 'text', 'correctIndex', 'options'],  // Kolom yang sesuai
     });
 
     // Pastikan ada soal untuk quizId yang diberikan
@@ -69,11 +69,11 @@ exports.submitExam = async (req, res) => {
     // Hitung nilai berdasarkan jawaban siswa
     let score = 0;
     questions.forEach((question, idx) => {
-      console.log(`Question ${question.text}, Correct Index: ${question.correctIndex}, User Answer: ${answers[idx]}`);
+      console.log(`Question: ${question.text}, Correct Index: ${question.correctIndex}, User Answer: ${answers[idx]}`);
       
       // Perbandingan jawaban siswa dengan correctIndex
       if (question.correctIndex === answers[idx]) {
-        score += 1;
+        score += 10;
       }
     });
 

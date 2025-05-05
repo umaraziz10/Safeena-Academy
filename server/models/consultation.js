@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'time_slot_id',
         as: 'slot'
       });
-      
+
     }
   }
 

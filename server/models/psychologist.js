@@ -57,6 +57,10 @@ module.exports = (sequelize, DataTypes) => {
       set(value) {
         this.setDataValue('service_type', JSON.stringify(value));
       }
+    },
+    image_path: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,
