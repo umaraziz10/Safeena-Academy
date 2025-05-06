@@ -1,7 +1,9 @@
 // pages/index.tsx
 
 import React from 'react';
-import LoginPage from '../Component/login';
+import LoginPage from './login';
+import VerifyModal from './Verify';
+import SuccessModal from './Success'
 import Navbar from '../Component/navbar';
 import {Footer} from "../Component/Footer";
 export default function Home() {

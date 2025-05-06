@@ -10,17 +10,17 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { name: "Home", href: "/" },
   {
-    name: "Services",
-    href: "#",
-    submenu: [
-      { name: "Counseling", href: "/services/counseling" },
-      { name: "Workshops", href: "/services/workshops" },
-      { name: "Group Therapy", href: "/services/group-therapy" },
-    ],
+    name: "Courses",
+    href: "/Educational"
+    // submenu: [
+    //   { name: "Counseling", href: "/services/counseling" },
+    //   { name: "Workshops", href: "/services/workshops" },
+    //   { name: "Group Therapy", href: "/services/group-therapy" },
+    // ],
   },
-  { name: "Resources", href: "/resources" },
-  { name: "About Us", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: "Consultation", href: "/Psychologist" },
+  // { name: "About Us", href: "/about" },
+  { name: "Contact", href: "/Chatbot" },
 ];
 
 export default function Navbar() {

@@ -1,8 +1,9 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
+  "/Psychologist1/page": "app/Psychologist1/page.js",
   "/page": "app/page.js",
-  "/Login/page": "app/Login/page.js",
+  "/Booking/page": "app/Booking/page.js",
   "/Chatbot/page": "app/Chatbot/page.js",
-  "/Educational/Courses/[id]/page": "app/Educational/Courses/[id]/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js"
+  "/Educational/page": "app/Educational/page.js",
+  "/Psychologist/page": "app/Psychologist/page.js"
 }

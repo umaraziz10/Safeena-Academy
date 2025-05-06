@@ -138,7 +138,7 @@ const Index = (): JSX.Element => {
         </div>
 
         {/* We are ready to help section */}
-        <section className='mt-[80px] relative'>
+        <section id="services" className='mt-[80px] relative'>
           <img className='w-full' alt='Vector' src='/vector.svg' />
           <div className='w-full [background-image:url(/cardbg.svg)] bg-no-repeat bg-cover py-[60px] md:py-[104px]'>
             <div className='max-w-[1070px] mx-auto px-4'>
@@ -234,16 +234,18 @@ const Index = (): JSX.Element => {
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
               nisi ut aliquip ex ea commodo consequat.
             </p>
-            <Button className='w-full md:w-[307px] h-[72px] rounded-[15px] bg-gradient-to-r from-[#337bbf] to-[#65b4ff]'>
-              <img
-                className='w-[31px] h-[31px] mr-2 object-cover'
-                alt='Icon'
-                src='/arrow.png'
-              />
-              <span className='font-medium text-xl md:text-2xl text-[#ffee5a]'>
-                Book Consultation
-              </span>
-            </Button>
+            <a href="/Psychologist">
+              <Button className="w-full md:w-[307px] h-[72px] rounded-[15px] bg-gradient-to-r from-[#337bbf] to-[#65b4ff]">
+                <img
+                  className="w-[31px] h-[31px] mr-2 object-cover"
+                  alt="Icon"
+                  src="/arrow.png"
+                />
+                <span className="font-medium text-xl md:text-2xl text-[#ffee5a]">
+                  Book Consultation
+                </span>
+              </Button>
+            </a>
           </div>
         </section>
 
