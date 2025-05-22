@@ -12,6 +12,19 @@ export const Tables = (): JSX.Element => {
   const [consultations, setConsultations] = useState<any[]>([]); // Stores the fetched consultation data
   const [searchTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    document.title = 'Consultation';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
   // Fetch consultations data from API
   useEffect(() => {
     const fetchData = async () => {

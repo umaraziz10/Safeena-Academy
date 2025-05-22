@@ -20,6 +20,19 @@ export const Badges = (): JSX.Element => {
   const [userID, setUserID] = useState(0);
   const [quizScores, setQuizScores] = useState<number[]>([0, 0, 0, 0, 0, 0]);
 
+  useEffect(() => {
+    document.title = 'Badges ';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchUser() {

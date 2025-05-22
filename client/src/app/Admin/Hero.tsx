@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Card, CardContent } from '../../components/ui/card';
 import Navbar from '../Component/navbar';
 import { motion } from 'framer-motion';
@@ -6,6 +6,20 @@ import { fadeIn } from '../variant';
 import Link from 'next/link';
 
 export const Hero = (): JSX.Element => {
+  useEffect(() => {
+    document.title = 'Admin';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   return (
     <div className='min-h-screen w-full flex items-center justify-center p-4 md:p-6 lg:p-8'>
       <Navbar />

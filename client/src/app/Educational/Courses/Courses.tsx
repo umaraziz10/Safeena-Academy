@@ -58,7 +58,7 @@ export const CoursePage = (): JSX.Element => {
   const [weekData, setWeekData] = useState<WeekData[]>([]);
   const [userID, setUserID] = useState(0);
   const router = useRouter();
-  
+
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -152,9 +152,19 @@ export const CoursePage = (): JSX.Element => {
 
   }, [userID, id]);
 
-  
-
-
+  useEffect(() => {
+    document.title = courseTitle;
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, [courseTitle]);  
 
   return (
     <div className='relative min-h-screen w-full flex flex-col'>

@@ -1,6 +1,8 @@
 {
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
-  "/Manage/page": "app/Manage/page.js"
+  "/Educational/Learning/[id]/page": "app/Educational/Learning/[id]/page.js",
+  "/Teacher/page": "app/Teacher/page.js",
+  "/Login/page": "app/Login/page.js",
+  "/Manage/page": "app/Manage/page.js",
+  "/Psychologist/page": "app/Psychologist/page.js",
+  "/Psychologist/[id]/page": "app/Psychologist/[id]/page.js"
 }

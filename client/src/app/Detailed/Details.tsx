@@ -54,6 +54,20 @@ export const Details = (): JSX.Element => {
     if (id) fetchPsychologist();
   }, [id]);
 
+  useEffect(() => {
+    document.title = PsyName;
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, [PsyName]);
+
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,6 +8,20 @@ import { motion } from 'framer-motion';
 import { fadeIn } from '../variant';
 
 export const Landing = (): JSX.Element => {
+  useEffect(() => {
+    document.title = 'Courses ';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   const courses = [
     { id: 1, title: 'Anxiety Disorders', image: '/image-2.png', highlighted: false },
     { id: 2, title: 'Depression', image: '/image-3.png', highlighted: false },

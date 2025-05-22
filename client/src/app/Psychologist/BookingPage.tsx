@@ -30,6 +30,20 @@ import Link from 'next/link';
 import { fadeIn } from '@/app/variant';
 
 export default function BookingPage() {
+  useEffect(() => {
+    document.title = 'Psychologist';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,11 +157,9 @@ export default function BookingPage() {
 
   const filteredPsychologists = psychologists.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  );
 
-const currentItems = filteredPsychologists.slice(indexOfFirstItem, indexOfLastItem);
-
-
+  const currentItems = filteredPsychologists.slice(indexOfFirstItem, indexOfLastItem);
 
 
   return (

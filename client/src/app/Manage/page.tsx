@@ -12,6 +12,20 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
+    document.title = 'Manage';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
+  useEffect(() => {
     async function fetchRole() {
       const res = await fetchWithToken('/users/me');
       const data = await res.json();
@@ -25,15 +39,15 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (role && role !== 'admin') {
+    if (role && role !== 'admin' && role !== 'teacher') {
       router.push('/');
     }
   }, [role, router]);
 
   // Render nothing while checking role
   if (!role) return null;
-  if (role !== 'admin') return null;
-  
+  if (role !== 'admin' && role !== 'teacher') return null;
+
   return (
     <div
       className='flex flex-col min-h-screen w-full'

@@ -17,6 +17,20 @@ const ChatbotPage = (): JSX.Element => {
   const [errorMessage, setErrorMessage] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    document.title = 'Supports';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;

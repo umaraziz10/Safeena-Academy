@@ -1,27 +1,35 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent } from '../Component/card';
+import { Card } from '../Component/card';
 import { Button } from '@/components/ui/button';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '../Component/accordion';
 import FallingLeaves from "../Component/falling-leaves"
 import { Box } from '../Component/Box';
 import { Footer } from '../Component/Footer';
 import { fetchWithToken } from '@/lib/fetchWithToken';
 import { motion } from 'framer-motion'
 import { fadeIn } from '@/app/variant'
-import { useParams } from 'next/navigation';
-import { Router } from 'lucide-react';
 
 const Index = (): JSX.Element => {
   const [continueCourseLink, setContinueCourseLink] = useState<string>('');
   const [role, setRole] = useState('');
   const [userID, setUserID] = useState(0);
+
+  
+  useEffect(() => {
+    document.title = 'Safeena Academy';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
 
   useEffect(() => {
     async function fetchRole() {

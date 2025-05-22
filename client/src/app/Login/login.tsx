@@ -24,6 +24,20 @@ export default function LoginPage() {
   const router = useRouter()
 
   useEffect(() => {
+    document.title = 'Welcome ';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
+  useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])

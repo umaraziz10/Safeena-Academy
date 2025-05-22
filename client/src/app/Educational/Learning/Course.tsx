@@ -15,6 +15,20 @@ import { set } from 'react-hook-form';
 
 
 export const CoursePage = (): JSX.Element => {
+  useEffect(() => {
+    document.title = 'Learning Video';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    
+    if (favicon) {
+      favicon.href = '/footer.png';
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '/footer.png';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   const { id } = useParams();
   
   const [courseID, setCourseID] = useState('');
@@ -58,6 +72,7 @@ export const CoursePage = (): JSX.Element => {
       </div>
     );
   }
+
   const handlePlayPause = () => {
     setPlaying(!playing);
   };

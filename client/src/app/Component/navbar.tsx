@@ -119,7 +119,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 md:w-12 md:h-12 overflow-hidden rounded-full border-2 border-forest-500 z-50 shadow-md">
               <Image
-                src="/Navbar.png"
+                src="/footer.png"
                 alt="Safeena Academy Logo"
                 width={48}
                 height={48}

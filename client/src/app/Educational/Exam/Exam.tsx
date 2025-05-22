@@ -58,20 +58,34 @@ export const CoursePage = (): JSX.Element => {
   },[]);
 
   useEffect(() => {
-      setLoading(true);
-      fetchWithToken(`/materials/${(Number(id) * 8) - 7}`)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          setCourseTitle(data.course.title);
-        })
-        .finally(() => {
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
-        });
-      }, []);
+    setLoading(true);
+    fetchWithToken(`/materials/${(Number(id) * 8) - 7}`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setCourseTitle(data.course.title);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      });
+    }, []);
+
+    useEffect(() => {
+      document.title = courseTitle;
+      const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+      
+      if (favicon) {
+        favicon.href = '/footer.png';
+      } else {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = '/footer.png';
+        document.head.appendChild(link);
+      }
+    }, [courseTitle]);
   
   if (loading) {
     return (
