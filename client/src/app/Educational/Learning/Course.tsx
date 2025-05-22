@@ -9,16 +9,20 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { fetchWithToken } from '@/lib/fetchWithToken';
+import { motion } from 'framer-motion';
+import { fadeIn } from '@/app/variant';
 import { set } from 'react-hook-form';
 
 
 export const CoursePage = (): JSX.Element => {
   const { id } = useParams();
   
+  const [courseID, setCourseID] = useState('');
   const [courseTitle, setCourseTitle] = useState('');
   const [materialTitle, setMaterialTitle] = useState('');
   const [materialDesc, setMaterialDesc] = useState('');
   const [materialVideo, setMaterialVideo] = useState('');
+  const [materialWeek, setMaterialWeek] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const [playing, setPlaying] = useState(false);
@@ -35,8 +39,10 @@ export const CoursePage = (): JSX.Element => {
         .then((data) => {
           setMaterialTitle(data.materials_title);
           setMaterialDesc(data.materials_desc);
+          setCourseID(data.course.id);
           setCourseTitle(data.course.title);
           setMaterialVideo(data.materials_video);
+          setMaterialWeek(data.week);
         })
         .finally(() => {
           setTimeout(() => {
@@ -93,14 +99,37 @@ export const CoursePage = (): JSX.Element => {
       <div className='min-h-screen bg-[#ffffff33]'>
         <main className='container mx-auto px-4 sm:px-6 lg:px-10 py-24 sm:pt-12 md:pt-24 lg:pt-32'>
           <div className='max-w-5xl mx-auto space-y-10 sm:space-y-12'>
+            <motion.div 
+            variants={fadeIn('right', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
+            className="text-sm sm:text-base font-medium space-x-1">
+              <a href={`/Educational/Courses/${courseID}`}>
+                <span className="text-[#337bbf] hover:underline">{courseTitle}</span>
+              </a>
+              <span className="text-black">&gt;</span>
+              <a href={`/Educational/Courses/${courseID}`}>
+                <span className="text-[#337bbf] hover:underline">Minggu ke-{materialWeek}</span>
+              </a>
+              <span className="text-black">&gt;</span>
+              <a href={`/Educational/Learning/${id}`}>
+                <span className="text-[#337bbf] hover:underline">{materialTitle}</span>
+              </a>
+            </motion.div>
             {/* Course Title */}
             <header className='space-y-2'>
-              <h1 className='text-3xl sm:text-4xl lg:text-5xl font-outfit tracking-tight'>
+              <motion.h1 
+              variants={fadeIn('left', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
+              className='text-3xl sm:text-4xl lg:text-5xl font-outfit tracking-tight'>
                 <span className='font-bold text-[#334fb4]'>{courseTitle} : </span>
                 <span className='text-[#65b4ff] ml-2 font-semibold'>
                   {materialTitle}
                 </span>
-              </h1>
+              </motion.h1>
             </header>
 
             {/* Video Player Card */}
@@ -182,14 +211,24 @@ export const CoursePage = (): JSX.Element => {
 
             {/* Course Content */}
             <section className='space-y-6 bg-white/20 backdrop-blur-sm rounded-xl p-6 sm:p-8'>
-              <h2 className='text-2xl sm:text-3xl lg:text-4xl font-bold text-[#334fb4] font-outfit'>
+              <motion.h2 
+              variants={fadeIn('left', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
+              className='text-2xl sm:text-3xl lg:text-4xl font-bold text-[#334fb4] font-outfit'>
                 {materialTitle}
-              </h2>
-              <div className='prose prose-lg max-w-none'>
+              </motion.h2>
+              <motion.div 
+              variants={fadeIn('right', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
+              className='prose prose-lg max-w-none'>
                 <p className='text-base sm:text-lg text-[#120000] font-outfit leading-relaxed'>
                   {materialDesc}
                 </p>
-              </div>
+              </motion.div>
             </section>
           </div>
         </main>

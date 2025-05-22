@@ -16,13 +16,52 @@ import {
 } from "../../components/ui/table";
 import { Search, Edit, Trash2 } from "lucide-react";
 import { fetchWithToken } from "@/lib/fetchWithToken";
+import { putWithToken } from "@/lib/putWithToken";
+import { deleteWithToken } from "@/lib/deleteWithToken";
 import SearchComponent from './search';
+import { motion } from "framer-motion";
+import { fadeIn } from "../variant";
 
 export const Tables = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState(0);
   const [users, setUsers] = useState<any[]>([]); // Users data from the API
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]); // Filtered users after search, filter, and sort
   const [totalPages, setTotalPages] = useState(0); // Total pages from API
+  const [selectedAccount, setSelectedAccount] = useState<null | {
+    id: number;
+    name: string;
+    role: string;
+    email: string;
+  }>(null);
+  const [editAccount, setEditAccount] = useState<null | {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  }>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const [deleteAccount, setDeleteAccount] = useState<null | { id: number; name: string }>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    async function fetchRole() {
+      try {
+        const roleRes = await fetchWithToken('/users/me');
+        const roleData = await roleRes.json();
+        setRole(roleData.role);
+      } catch (error) {
+        console.error("Error fetching role:", error);
+      }
+    }
+    fetchRole();
+  }, []);
+
 
   // Fetch data from API on component mount
   useEffect(() => {
@@ -61,69 +100,97 @@ export const Tables = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-gradient-to-b bg-white/10 py-12">
       <section className="w-full max-w-[1440px] mx-auto px-6 lg:px-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#337bbf] font-['Outfit',Helvetica] mb-8 md:mb-12">
-          Manage Accounts
-        </h1>
+        <motion.h1 
+        variants={fadeIn('down', 0.1)}
+        initial='hidden'
+        whileInView={'show'}
+        viewport={{once: false, amount: 0.7}}
+        className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#337bbf] font-['Outfit',Helvetica] mb-8 md:mb-12">
+          Kelola Akun
+        </motion.h1>
 
         {/* Search, filter, and sort component */}
         <SearchComponent data={users} onSearch={updateFilteredData} />
 
         <div className="w-full overflow-x-auto rounded-xl shadow-lg">
-          <Table>
+          <Table className="min-w-full table-auto border-separate border-spacing-y-2">
             <TableHeader>
-              <TableRow className="border-b-2 border-[#337bbf20]">
-                <TableHead className="text-left w-20 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">
-                  No
-                </TableHead>
-                <TableHead className="text-left w-32 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">
-                  Id
-                </TableHead>
-                <TableHead className="text-left w-64 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">
-                  Name
-                </TableHead>
-                <TableHead className="text-left w-32 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">
-                  Role
-                </TableHead>
-                <TableHead className="text-left py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">
-                  Email
-                </TableHead>
-                <TableHead className="text-center w-40 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">
-                  Action
-                </TableHead>
+              <TableRow className="bg-white border-b border-[#337bbf30]">
+                {["No", "Id", "Name", "Role", "Email", "Action"].map((head, idx) => (
+                  <TableHead
+                    key={idx}
+                    className={`text-left px-4 py-5 text-[#337bbf] text-base sm:text-lg md:text-xl font-semibold font-outfit ${
+                      head === "Action" ? "text-center" : ""
+                    }`}
+                  >
+                    {head}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedData.map((account, index) => (
                 <TableRow
                   key={index}
-                  className={index % 2 === 0 ? "bg-[#f8fafc]" : "bg-[#337bbf08]"}
+                  className={`rounded-lg transition hover:shadow-md ${
+                    index % 2 === 0 ? "bg-[#f1f5f9]" : "bg-[#e8f1fb]"
+                  }`}
                 >
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">
-                  {currentPage * 10 + index + 1} {/* Auto-increment logic */}
+                  <TableCell className="px-4 py-4 text-sm sm:text-base text-[#1e3a8a] font-medium font-outfit">
+                    {currentPage * 10 + index + 1}
                   </TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">
+                  <TableCell className="px-4 py-4 text-sm sm:text-base text-[#1e3a8a] font-outfit">
                     {account.id}
                   </TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">
+                  <TableCell className="px-4 py-4 text-sm sm:text-base text-[#1e3a8a] font-outfit">
                     {account.name}
                   </TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">
+                  <TableCell className="px-4 py-4 text-sm sm:text-base text-[#1e3a8a] font-outfit">
                     {account.role}
                   </TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf] truncate max-w-[300px]">
+                  <TableCell className="px-4 py-4 text-sm sm:text-base text-[#1e3a8a] font-outfit truncate max-w-[300px]">
                     {account.email}
                   </TableCell>
-                  <TableCell className="py-4">
-                    <div className="flex items-center justify-center space-x-2 sm:space-x-3">
-                      <button className="p-2 hover:bg-[#337bbf20] rounded-full transition-colors">
+                  <TableCell className="px-4 py-4">
+                    <div className="flex justify-center items-center space-x-2 sm:space-x-3">
+                      <button
+                        className="p-2 rounded-full hover:bg-[#337bbf30] transition"
+                        onClick={() =>
+                          setSelectedAccount({
+                            id: account.id,
+                            name: account.name,
+                            role: account.role,
+                            email: account.email,
+                          })
+                        }
+                      >
                         <Search className="w-5 h-5 sm:w-6 sm:h-6 text-[#337bbf]" />
                       </button>
-                      <button className="p-2 hover:bg-[#337bbf20] rounded-full transition-colors">
-                        <Edit className="w-5 h-5 sm:w-6 sm:h-6 text-[#337bbf]" />
-                      </button>
-                      <button className="p-2 hover:bg-[#337bbf20] rounded-full transition-colors">
-                        <Trash2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#337bbf]" />
-                      </button>
+                      {role !== "teacher" && (
+                        <>
+                          <button
+                            className="p-2 rounded-full hover:bg-[#337bbf30] transition"
+                            onClick={() =>
+                              setEditAccount({
+                                id: account.id,
+                                name: account.name,
+                                email: account.email,
+                                role: account.role,
+                              })
+                            }
+                          >
+                            <Edit className="w-5 h-5 sm:w-6 sm:h-6 text-[#337bbf]" />
+                          </button>
+                          <button
+                            className="p-2 rounded-full hover:bg-[#337bbf30] transition"
+                            onClick={() =>
+                              setDeleteAccount({ id: account.id, name: account.name })
+                            }
+                          >
+                            <Trash2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#ef4444]" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -196,6 +263,164 @@ export const Tables = (): JSX.Element => {
             </PaginationContent>
           </Pagination>
         </div>
+        {selectedAccount && (
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-3xl shadow-xl w-[90%] max-w-md p-6 relative">
+              <h2 className="text-4xl font-semibold text-[#337bbf] mb-4">Account Info</h2>
+              <div className="space-y-2 text-xl text-gray-700">
+                <p><span className="font-medium text-[#337bbf]">ID:</span> {selectedAccount.id}</p>
+                <p><span className="font-medium text-[#337bbf]">Nama:</span> {selectedAccount.name}</p>
+                <p><span className="font-medium text-[#337bbf]">Role:</span> {selectedAccount.role}</p>
+                <p><span className="font-medium text-[#337bbf]">Email:</span> {selectedAccount.email}</p>
+              </div>
+              <button
+                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition"
+                onClick={() => setSelectedAccount(null)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+        {editAccount && (
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setIsSubmitting(true);
+                setErrorMsg('');
+
+                try {
+                  const response = await putWithToken(`/users/${editAccount.id}`, {
+                    name: editAccount.name,
+                    email: editAccount.email,
+                    role: editAccount.role,
+                  });
+
+                  if (!response.ok) throw new Error('Failed to update user.');
+
+                  const data = await response.json();
+                  console.log(data.message);
+                  // Optionally refresh user data here
+                  setEditAccount(null);
+                  window.location.reload();
+                } catch (error) {
+                  setErrorMsg((error as Error).message);
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 relative"
+            >
+              <h2 className="text-lg font-semibold text-[#337bbf] mb-4">Edit Account</h2>
+
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Nama
+                <input
+                  type="text"
+                  value={editAccount.name}
+                  onChange={(e) => setEditAccount({ ...editAccount, name: e.target.value })}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#337bbf]"
+                  required
+                />
+              </label>
+
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Email
+                <input
+                  type="email"
+                  value={editAccount.email}
+                  onChange={(e) => setEditAccount({ ...editAccount, email: e.target.value })}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#337bbf]"
+                  required
+                />
+              </label>
+
+              <label className="block mb-4 text-sm font-medium text-gray-700">
+                Role
+                <select
+                  value={editAccount.role}
+                  onChange={(e) => setEditAccount({ ...editAccount, role: e.target.value })}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#337bbf]"
+                  required
+                >
+                  <option value="student">Student</option>
+                  <option value="admin">Admin</option>
+                  <option value="teacher">Teacher</option>
+                  {/* Add other roles if needed */}
+                </select>
+              </label>
+
+              {errorMsg && <p className="text-red-600 mb-2">{errorMsg}</p>}
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setEditAccount(null)}
+                  className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-md bg-[#337bbf] text-white hover:bg-[#2867a0] transition disabled:opacity-50"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+        {deleteAccount && (
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 relative">
+              <h2 className="text-lg font-semibold text-[#dc2626] mb-4">Confirm Delete</h2>
+              <p className="mb-6 text-gray-700">
+                Apakah Anda yakin ingin menghapus pengguna <span className="font-semibold">{deleteAccount.name}</span>?
+                Tindakan ini tidak dapat dibatalkan.
+              </p>
+
+              {deleteError && <p className="text-red-600 mb-3">{deleteError}</p>}
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition"
+                  onClick={() => setDeleteAccount(null)}
+                  disabled={isDeleting}
+                >
+                  Batal
+                </button>
+                <button
+                  className="px-4 py-2 rounded-md bg-[#dc2626] text-white hover:bg-[#b91c1c] transition disabled:opacity-50"
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    setDeleteError('');
+                    try {
+                      const response = await deleteWithToken(`/users/${deleteAccount.id}`, null);
+
+                      if (!response.ok) throw new Error('Failed to delete user.');
+
+                      // Optionally refresh your user list here, e.g., call a fetch function or update state
+
+                      setDeleteAccount(null);
+                      window.location.reload();
+                    } catch (error) {
+                      setDeleteError((error as Error).message);
+                    } finally {
+                      setIsDeleting(false);
+                    }
+                  }}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MapPinIcon } from "lucide-react"
 import {
   type Appointment,
   getFilteredData,
@@ -26,24 +27,61 @@ import Navbar from '../Component/navbar';
 import { Footer } from '../Component/Footer';
 import { fetchWithToken } from "@/lib/fetchWithToken";
 import Link from 'next/link';
+import { fadeIn } from '@/app/variant';
 
 export default function BookingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [psychologists, setPsychologists] = useState<any[]>([]); // Type for psychologists data
+  const [allPsychologists, setAllPsychologists] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 3;
-
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  
   // Search filters
-  const [selectedCity, setSelectedCity] = useState<string>('All Cities');
-  const [selectedDate, setSelectedDate] = useState<string>('All Dates');
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
-  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
-  const [cities, setCities] = useState<string[]>([]);
-  const [dates, setDates] = useState<string[]>([]);
+  
+  const [hasOngoing, setHasOngoing] = useState(true);
+  const [ongoingPsyId, setOngoingPsyId] = useState(0);
+  const [ongoingService, setOngoingService] = useState('');
+  const [ongoingPsy, setOngoingPsy] = useState('');
+  const [ongoingDate, setOngoingDate] = useState('');
+  const [ongoingStart, setOngoingStart] = useState('');
+  const [ongoingEnd, setOngoingEnd] = useState('');
+  const [ongoingLoc, setOngoingLoc] = useState('');
+  const [ongoingMap, setOngoingMap] = useState('');
+
+  useEffect(() => {
+    async function fetchOngoing() {
+      try {
+        const ongoingRes = await fetchWithToken('/consultations/ongoing-consult');
+        const data = await ongoingRes.json();
+
+        if (data.message === 'No ongoing consultations found') {
+          setHasOngoing(false);
+        } else {
+          const ongoing = data.ongoing_consultations[0]; // Use index if it's an array
+          setOngoingPsyId(ongoing.psychologist_id);
+          setOngoingService(ongoing.type_of_service);
+          setOngoingPsy(ongoing.psychologist_name);
+          setOngoingDate(ongoing.consult_date);
+          setOngoingStart(ongoing.start_time);
+          setOngoingEnd(ongoing.end_time);
+          setOngoingLoc(ongoing.location);
+          setOngoingMap(ongoing.location_url);
+          setHasOngoing(true);
+        }
+      } catch (error) {
+        console.error('Error fetching consultations:', error);
+        setHasOngoing(false);
+      }
+    }
+
+    fetchOngoing();
+  }, []);
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -53,32 +91,6 @@ export default function BookingPage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Load cities and dates
-  useEffect(() => {
-    setCities(['All Cities', ...getCities()]);
-    setDates(['All Dates', ...getDates()]);
-  }, []);
-
-  // Load filtered data
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-
-      const filters = {
-        city: selectedCity === 'All Cities' ? undefined : selectedCity,
-        date: selectedDate === 'All Dates' ? undefined : selectedDate,
-        search: searchTerm,
-      };
-
-      const result = getFilteredData(currentPage, itemsPerPage, filters);
-      setPsychologists(result.data);
-      setTotalPages(result.totalPages);
-      setIsLoading(false);
-    };
-
-    loadData();
-  }, [currentPage, selectedCity, selectedDate, searchTerm]);
 
   // Fetch psychologists data from the API
   useEffect(() => {
@@ -128,19 +140,15 @@ export default function BookingPage() {
     setCurrentPage(1); // Reset to first page when searching
   };
 
-  // Reset filters
-  const resetFilters = () => {
-    setSelectedCity('All Cities');
-    setSelectedDate('All Dates');
-    setSearchTerm('');
-    setCurrentPage(1);
-  };
 
-  // Slice the psychologists data based on the current page and items per page
-  const currentItems = psychologists.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const filteredPsychologists = psychologists.filter((p) =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+const currentItems = filteredPsychologists.slice(indexOfFirstItem, indexOfLastItem);
+
+
+
 
   return (
     <div
@@ -156,37 +164,39 @@ export default function BookingPage() {
       {/* Hero Section */}
       <section className='container mx-auto px-4 mt-6 md:mt-8'>
         <motion.div
+          variants={fadeIn('down', 0.1)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{once: false, amount: 0.7}}
           className='bg-[#337bbf] rounded-3xl overflow-hidden relative'
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
         >
           <div className='p-6 md:p-12 w-full md:max-w-[50%] text-white'>
             <motion.h1
+              variants={fadeIn('left', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
               className='text-3xl md:text-5xl font-bold mb-4 leading-tight'
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Be the <span className='text-[#edd500]'>Happiest</span>
+              Jadilah Versi <span className='text-[#edd500]'>Terbaik</span>
               <br />
-              Version of Yourself!
+              Dari Dirimu!
             </motion.h1>
             <motion.p
+              variants={fadeIn('right', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
               className='mb-6 text-sm md:text-base opacity-90'
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
             >
-              Everyone deserves to feel heard, supported, and empowered.{' '}
+              Setiap orang berhak merasa didengar, didukung, dan diberdayakan.{' '}
               <span className='text-[#edd500] font-medium'>
-                Book a consultation
+              Jadwalkan sesi konsultasi
               </span>{' '}
-              session to talk with a trusted professional about your thoughts,
-              emotions, and goals. Together let's take meaningful steps toward
-              becoming the happiest and healthiest version of yourself.
+              untuk berbicara dengan profesional terpercaya tentang pikiran, emosi, dan tujuan Anda. Bersama-sama, mari kita ambil langkah-langkah berarti menuju versi diri Anda yang paling bahagia dan sehat.
             </motion.p>
-            <motion.button
+            <motion.a
+              href='#counselor-listings'
               className='bg-white text-[#337bbf] px-6 py-3 rounded-full flex items-center gap-2 font-medium hover:bg-[#edd500] hover:text-white transition-all shadow-lg'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -194,15 +204,16 @@ export default function BookingPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Book now
+              Konsultasi Sekarang
               <ChevronRight className='w-5 h-5' />
-            </motion.button>
+            </motion.a>
           </div>
           <motion.div
+            variants={fadeIn('left', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
             className='md:absolute md:right-0 md:bottom-0 md:h-full md:w-[50%] flex justify-center mt-6 md:mt-0'
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
           >
             <Image
               src='/maskot.png'
@@ -218,45 +229,108 @@ export default function BookingPage() {
       {/* Booking Section */}
       <section className='container mx-auto px-4 mt-12 flex'>
         <motion.div
+          variants={fadeIn('up', 0.1)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{once: false, amount: 0.7}}
           className='hidden md:flex flex-col items-center mr-4 text-vertical'
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
         >
           <div className='rotate-180 [writing-mode:vertical-lr] text-2xl font-bold'>
-            <span className='text-[#edd500]'>Your Ongoing</span>{' '}
-            <span className='text-[#337bbf]'>Booking</span>
+            <span className='text-[#edd500]'>Jadwal Konsultasi</span>{' '}
+            <span className='text-[#337bbf]'>Kamu</span>
           </div>
         </motion.div>
+
         <motion.div
-          className="flex-1 bg-white rounded-xl p-6 relative shadow-md hover:shadow-lg transition-shadow"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className='flex-1 bg-white rounded-xl p-6 relative shadow-md hover:shadow-lg transition-shadow'
+          variants={fadeIn('left', 0.1)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{once: false, amount: 0.7}}
           whileHover={{ y: -5 }}
         >
-          <div className="absolute top-0 left-0 w-full h-2 bg-[#337bbf] rounded-t-xl"></div>
-          <div className="text-[#337bbf] mb-2 text-center md:text-left font-medium text-xl">
-            You don't have any ongoing booking
-          </div>
-          <div className="flex justify-center items-center mt-6">
-            <div className="text-center text-gray-600 text-sm md:text-base">
-              <p>Looks like you haven't booked any counseling sessions yet.</p>
-              <p className="mt-2 text-[#337bbf] font-medium">Start by booking your first session!</p>
-            </div>
-          </div>
-          <div className="flex justify-center gap-4 mt-6">
-            {/* <Button className="w-full md:w-[307px] h-[72px] rounded-[15px] bg-gradient-to-r from-[#337bbf] to-[#65b4ff]">
-              <img
-                className="w-[31px] h-[31px] mr-2 object-cover"
-                alt="Icon"
-                src="/arrow.png"
-              />
-              <span className="font-medium text-xl md:text-2xl text-[#ffee5a]">
-                Book Consultation
-              </span>
-            </Button> */}
-          </div>
+          <div className='absolute top-0 left-0 w-full h-2 bg-[#337bbf] rounded-t-xl'></div>
+
+          {hasOngoing ? (
+            <>
+              <div className='text-[#337bbf] mb-2 text-center md:text-left font-medium'>
+                <b>Jenis Layanan :</b> Konsultasi {ongoingService}
+              </div>
+              <div className='flex flex-col md:flex-row justify-between items-center md:items-start gap-4'>
+                <div className='flex flex-col md:flex-row items-center md:items-start gap-3'>
+                  <a
+                    href={ongoingMap}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='bg-[#337bbf] hover:bg-[#28629e] transition-all duration-200 transform hover:scale-105 text-white p-2 rounded-md shadow-md inline-flex items-center justify-center'
+                  >
+                    <MapPin className='w-5 h-5' />
+                  </a>
+                  <div className='text-center md:text-left'>
+                    <div className='text-[#337bbf] font-medium text-lg'>
+                      {ongoingPsy}
+                    </div>
+                    <div className='text-sm text-gray-600 mt-2'>
+                      <div className='flex items-center justify-center md:justify-start gap-2 mb-2'>
+                        <Calendar className='w-4 h-4 text-[#337bbf]' />
+                        {new Date(ongoingDate).toLocaleDateString('id-ID', {
+                          weekday: 'long',
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </div>
+                      <div className='flex items-center justify-center md:justify-start gap-2 mb-2'>
+                        <Clock className='w-4 h-4 text-[#337bbf]' />
+                        <span>
+                          {ongoingStart.slice(0, 5)} - {ongoingEnd.slice(0, 5)}
+                        </span>
+                      </div>
+                      <div className='flex items-center justify-center md:justify-start gap-2 mb-2'>
+                        <MapPinIcon className='w-4 h-4 text-[#337bbf]' />
+                        <span>{ongoingLoc}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className='w-40 h-40 rounded-full overflow-hidden mr-20 bg-gray-200 shrink-0 border-4 border-[#e6f0f9] shadow-md'>
+                  <Image
+                    src={`/Psychologist/id${ongoingPsyId}`}
+                    alt='Counselor'
+                    width={200}
+                    height={200}
+                    className='object-cover'
+                  />
+                </div>
+              </div>
+              <div className='flex justify-center gap-2 mt-6'>
+                <div className='w-2 h-2 rounded-full bg-gray-300'></div>
+                <div className='w-2 h-2 rounded-full bg-[#337bbf]'></div>
+                <div className='w-2 h-2 rounded-full bg-gray-300'></div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className='flex justify-center items-center text-[#337bbf] mb-4 text-center md:text-left font-semibold text-xl mt-[1rem]'>
+                Kamu belum menjadwalkan konsultasi.
+              </div>
+              <div className='flex justify-center items-center mt-4'>
+                <div className='text-center text-gray-600 text-sm md:text-base'>
+                  <p className='mb-2'>Sepertinya Anda belum menjadwalkan sesi konseling apa pun.</p>
+                  <a 
+                  href='#counselor-listings'
+                  className='text-[#337bbf] font-medium'>
+                    Mulailah dengan menjadwalkan sesi pertama Anda sekarang!
+                  </a>
+                </div>
+              </div>
+              <div className='flex justify-center gap-2 mt-20'>
+                <div className='w-2 h-2 rounded-full bg-gray-300'></div>
+                <div className='w-2 h-2 rounded-full bg-[#337bbf]'></div>
+                <div className='w-2 h-2 rounded-full bg-gray-300'></div>
+              </div>
+            </>
+          )}
         </motion.div>
       </section>
 
@@ -264,95 +338,19 @@ export default function BookingPage() {
       <section className='container mx-auto px-4 mt-12'>
         <motion.div
           className='flex flex-col md:flex-row gap-4'
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={fadeIn('down', 0.1)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{once: false, amount: 0.7}}
         >
-          {/* City Dropdown */}
-          <div className='flex-1 relative'>
-            <div
-              className='bg-white rounded-full px-4 py-3 flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer'
-              onClick={() => setCityDropdownOpen(!cityDropdownOpen)}
-            >
-              <MapPin className='w-5 h-5 text-[#337bbf]' />
-              <span className='text-[#337bbf] font-medium'>{selectedCity}</span>
-              <ChevronDown className='w-4 h-4 ml-auto text-[#337bbf]' />
-            </div>
-
-            {cityDropdownOpen && (
-              <motion.div
-                className='absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto'
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                {cities.map((city) => (
-                  <div
-                    key={city}
-                    className={`px-4 py-2 cursor-pointer hover:bg-[#e6f0f9] ${
-                      selectedCity === city
-                        ? 'bg-[#e6f0f9] text-[#337bbf] font-medium'
-                        : ''
-                    }`}
-                    onClick={() => {
-                      setSelectedCity(city);
-                      setCityDropdownOpen(false);
-                      setCurrentPage(1);
-                    }}
-                  >
-                    {city}
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </div>
-
-          {/* Date Dropdown */}
-          <div className='flex-1 relative'>
-            <div
-              className='bg-white rounded-full px-4 py-3 flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer'
-              onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-            >
-              <Calendar className='w-5 h-5 text-[#337bbf]' />
-              <span className='text-[#337bbf] font-medium'>{selectedDate}</span>
-              <ChevronDown className='w-4 h-4 ml-auto text-[#337bbf]' />
-            </div>
-
-            {dateDropdownOpen && (
-              <motion.div
-                className='absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto'
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                {dates.map((date) => (
-                  <div
-                    key={date}
-                    className={`px-4 py-2 cursor-pointer hover:bg-[#e6f0f9] ${
-                      selectedDate === date
-                        ? 'bg-[#e6f0f9] text-[#337bbf] font-medium'
-                        : ''
-                    }`}
-                    onClick={() => {
-                      setSelectedDate(date);
-                      setDateDropdownOpen(false);
-                      setCurrentPage(1);
-                    }}
-                  >
-                    {date}
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </div>
 
           {/* Search Input */}
           <div className='flex-1 md:flex-[2] flex'>
-            <div className='flex-1 bg-white rounded-l-full px-4 py-3 flex items-center gap-2 shadow-md'>
+            <div className='flex-1 bg-white rounded-l-full rounded-r-full px-4 py-3 flex items-center gap-2 shadow-md'>
               <Search className='w-5 h-5 text-gray-400' />
               <input
                 type='text'
-                placeholder='Search Psychologist'
+                placeholder='Cari Psikolog'
                 className='bg-transparent border-none outline-none flex-1 text-gray-700'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -363,76 +361,12 @@ export default function BookingPage() {
                 }}
               />
             </div>
-            <button
-              className='bg-[#337bbf] text-white px-4 py-3 rounded-r-full hover:bg-[#edd500] transition-all'
-              onClick={handleSearch}
-            >
-              Search
-            </button>
           </div>
         </motion.div>
-
-        {/* Active Filters */}
-        {(selectedCity !== 'All Cities' ||
-          selectedDate !== 'All Dates' ||
-          searchTerm) && (
-          <motion.div
-            className='mt-4 flex flex-wrap items-center gap-2'
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <span className='text-sm text-gray-500 flex items-center'>
-              <Filter className='w-4 h-4 mr-1' /> Active filters:
-            </span>
-
-            {selectedCity !== 'All Cities' && (
-              <span className='bg-[#e6f0f9] text-[#337bbf] text-xs px-3 py-1 rounded-full flex items-center'>
-                {selectedCity}
-                <button
-                  className='ml-1 hover:text-red-500'
-                  onClick={() => setSelectedCity('All Cities')}
-                >
-                  <X className='w-3 h-3' />
-                </button>
-              </span>
-            )}
-
-            {selectedDate !== 'All Dates' && (
-              <span className='bg-[#e6f0f9] text-[#337bbf] text-xs px-3 py-1 rounded-full flex items-center'>
-                {selectedDate}
-                <button
-                  className='ml-1 hover:text-red-500'
-                  onClick={() => setSelectedDate('All Dates')}
-                >
-                  <X className='w-3 h-3' />
-                </button>
-              </span>
-            )}
-
-            {searchTerm && (
-              <span className='bg-[#e6f0f9] text-[#337bbf] text-xs px-3 py-1 rounded-full flex items-center'>
-                "{searchTerm}"
-                <button
-                  className='ml-1 hover:text-red-500'
-                  onClick={() => setSearchTerm('')}
-                >
-                  <X className='w-3 h-3' />
-                </button>
-              </span>
-            )}
-
-            <button
-              className='text-xs text-[#337bbf] hover:underline ml-auto'
-              onClick={resetFilters}
-            >
-              Reset all filters
-            </button>
-          </motion.div>
-        )}
       </section>
 
       {/* Counselor Listings */}
-      <section id='counselor-listings' className='container mx-auto px-4 mt-8'>
+      <section id='counselor-listings' className='container mx-auto px-4 mt-8 scroll-mt-[15rem]'>
         <AnimatePresence mode='wait'>
           {isLoading ? (
             <motion.div
@@ -450,33 +384,28 @@ export default function BookingPage() {
               animate={{ opacity: 1, y: 0 }}
             >
               <div className='text-[#337bbf] text-xl font-medium mb-2'>
-                No psychologists found
+                Tidak ada psikolog yang ditemukan
               </div>
               <p className='text-gray-600'>
-                Try adjusting your search filters to find more results.
+                Cobalah menyesuaikan pencarianmu untuk menemukan lebih banyak hasil.
               </p>
-              <button
-                className='mt-4 bg-[#337bbf] text-white px-4 py-2 rounded-full hover:bg-[#edd500] transition-all'
-                onClick={resetFilters}
-              >
-                Reset filters
-              </button>
             </motion.div>
           ) : (
             <motion.div
-              key={currentPage + selectedCity + selectedDate + searchTerm}
+              key={searchTerm}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {currentItems.map((psychologist, index) => (
+              {currentItems.map((psychologist) => (
                 <motion.div
                   key={psychologist.id}
                   className='bg-white rounded-xl p-6 mb-6 flex flex-col md:flex-row items-center md:items-start gap-6 shadow-md hover:shadow-lg transition-all'
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  // variants={fadeIn('up', 0.1)}
+                  // initial='hidden'
+                  // whileInView={'show'}
+                  // viewport={{once: false, amount: 0.7}}
                   whileHover={{ y: -5 }}
                 >
                   <div className='w-24 h-24 rounded-full overflow-hidden bg-gray-200 shrink-0 border-4 border-[#e6f0f9] shadow-md'>
@@ -497,18 +426,18 @@ export default function BookingPage() {
                         <div className='w-4 h-4 bg-white rounded-full'></div>
                       </div>
                       <span className='text-sm text-gray-600'>
-                        {psychologist.handled_count} people have booked a consultation
+                        {psychologist.handled_count} orang telah melakukan konsultasi.
                       </span>
                     </div>
                     <div className='mt-3 text-sm text-gray-600 flex items-start gap-2'>
                       <MapPin className='w-4 h-4 text-[#337bbf] shrink-0 mt-1' />
                       <span>
-                        {psychologist.location || 'Jakarta Selatan - Ibunda.id - Konseling Jakarta'}
+                        {psychologist.location}
                       </span>
                     </div>
                     <div className='mt-3 text-sm text-gray-600 flex items-center justify-center md:justify-start gap-2'>
                       <Clock className='w-4 h-4 text-[#337bbf]' />
-                      <span>Available Schedule: 08:00 - 21:45 WIB</span>
+                      <span>Jadwal Tersedia: 08:00 - 21:45 WIB</span>
                     </div>
 
                     {/* Available time slots */}
@@ -519,9 +448,8 @@ export default function BookingPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {/* <Link href={`/Detailed/${psychologist.id}`}> */}
-                    <Link href={'/Detailed'}>
-                      Make an Appointment
+                    <Link href={`/Psychologist/${psychologist.id}`}>
+                      Buat Janji
                     </Link>
                   </motion.button>
                   </div>

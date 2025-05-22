@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/app/Component/navbar';
 import { Footer } from '@/app/Component/Footer';
+import { motion } from 'framer-motion';
+import { fadeIn } from '../variant';
 
 type ChatMessage = {
   sender: "user" | "bot" | "loading";
@@ -23,7 +25,7 @@ const ChatbotPage = (): JSX.Element => {
     setErrorMessage("");
 
     // Save user message first
-    setChatHistory((prev) => [...prev, { sender: "user", text }, { sender: "loading", text: "Safeena is typing..." }]);
+    setChatHistory((prev) => [...prev, { sender: "user", text }, { sender: "loading", text: "Safeena sedang mengetik..." }]);
 
     try {
       const res = await fetch("/Chatbot/api", {
@@ -89,17 +91,32 @@ const ChatbotPage = (): JSX.Element => {
       <main className="flex-grow">
         <div className="max-w-[1440px] mx-auto px-4 md:px-20 lg:px-20 py-20 md:py-20 lg:py-32">
           <section>
-            <div className="max-w-[800px] mx-auto bg-white rounded-[15px] p-6 md:p-10 shadow-xl flex flex-col h-[80vh]">
-              <h1 className="font-bold text-3xl text-center text-[#334fb4] mb-6">
-                Chat with Safeena!
-              </h1>
+            <motion.div 
+            variants={fadeIn('down', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
+            className="max-w-[800px] mx-auto bg-white rounded-[15px] p-6 md:p-10 shadow-xl flex flex-col h-[80vh]">
+              <motion.h1
+              variants={fadeIn('down', 0.1)}
+              initial='hidden'
+              whileInView={'show'}
+              viewport={{once: false, amount: 0.7}}
+              className="font-bold text-3xl text-center text-[#334fb4] mb-6">
+                Berbincang dengan  Safeena!
+              </motion.h1>
 
               {/* Chat messages area */}
               <div className="flex-1 overflow-y-auto space-y-4 mb-6 p-2">
                 {chatHistory.length === 0 ? (
-                  <div className="text-center text-gray-500 mt-10">
+                  <motion.div 
+                  variants={fadeIn('up', 0.1)}
+                  initial='hidden'
+                  whileInView={'show'}
+                  viewport={{once: false, amount: 0.7}}
+                  className="text-center text-gray-500 mt-10">
                     Mulai ngobrol dengan Safeena 💬
-                  </div>
+                  </motion.div>
                 ) : (
                   chatHistory.map((msg, index) => (
                     <div
@@ -131,14 +148,14 @@ const ChatbotPage = (): JSX.Element => {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   className="flex-1 p-3 rounded-lg border border-[#ccc] focus:outline-none focus:ring-2 focus:ring-[#337bbf]"
-                  placeholder="Ask me anything..."
+                  placeholder="Tanya aku apa saja..."
                 />
                 <button
                   type="submit"
                   className="ml-4 bg-[#337bbf] hover:bg-[#285a8c] text-white p-3 rounded-lg transition disabled:opacity-50"
                   disabled={loading}
                 >
-                  {loading ? "Thinking..." : "Ask"}
+                  {loading ? "Berpikir..." : "Tanya"}
                 </button>
               </form>
 
@@ -146,7 +163,7 @@ const ChatbotPage = (): JSX.Element => {
               {errorMessage && (
                 <div className="text-red-500 text-center mt-4">{errorMessage}</div>
               )}
-            </div>
+            </motion.div>
           </section>
         </div>
       </main>

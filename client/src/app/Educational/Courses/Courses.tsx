@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,9 @@ import Navbar from '@/app/Component/navbar';
 import { Footer } from '@/app/Component/Footer';
 import { useParams, useSearchParams } from 'next/navigation';
 import { fetchWithToken } from "@/lib/fetchWithToken";
-import Link from 'next/link';  // Import Link from Next.js
+import { motion } from 'framer-motion';
+import { fadeIn } from '@/app/variant';
+// import Link from 'next/link';  // Import Link from Next.js
 
 interface Material {
   material_id: number;
@@ -21,7 +24,7 @@ interface Material {
   materials_desc: string;
   materials_video: string;
   materials_duration: number;
-  status: number;
+  status: number[];
   createdAt: string;
   updatedAt: string;
 }
@@ -51,7 +54,23 @@ export const CoursePage = (): JSX.Element => {
 
   const [courseTitle, setCourseTitle] = useState('');
   const [courseDesc, setCourseDesc] = useState('');
+  const [duration, setDuration] = useState(0);
   const [weekData, setWeekData] = useState<WeekData[]>([]);
+  const [userID, setUserID] = useState(0);
+  const router = useRouter();
+  
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const userRes = await fetchWithToken('/users/me');
+        const userData = await userRes.json();
+        setUserID(userData.id);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    }
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -63,7 +82,12 @@ export const CoursePage = (): JSX.Element => {
 
         const materialRes = await fetchWithToken(`/materials/course/${id}`);
         const materials: Material[] = await materialRes.json();
+        const currentUserId = userID;
 
+        const quizRes = await fetchWithToken(`/quiz/${id}`);
+        const quizData = await quizRes.json();
+        setDuration(quizData.duration);
+        
         const grouped: Record<number, WeekData> = {};
 
         materials.forEach((material) => {
@@ -78,14 +102,15 @@ export const CoursePage = (): JSX.Element => {
             };
           }
 
+          const isCompleted = material.status.includes(currentUserId);
           grouped[material.week].content?.push({
             material_id: material.material_id,
             title: material.materials_title,
             type: 'Video',
-            duration: `${material.materials_duration} min`,
-            icon: material.status === 1 ? '/done-logo.png' : '/video-logo.png',
+            duration: `${material.materials_duration} menit`,
+            icon: isCompleted ? '/done-logo.png' : '/video-logo.png',
             link: material.materials_video,
-            status: material.status
+            status: isCompleted ? 1 : 0
           });
         });
 
@@ -95,7 +120,6 @@ export const CoursePage = (): JSX.Element => {
   
           week.content?.forEach((item) => {
             if (item.status !== 1) {
-              // Kalau belum selesai, durasinya ditambah
               const minutes = parseInt(item.duration.replace(' min', ''), 10);
               totalDuration += isNaN(minutes) ? 0 : minutes;
               allCompleted = false;
@@ -106,7 +130,7 @@ export const CoursePage = (): JSX.Element => {
             week.videos = 'All Videos Completed';
             week.status = 'completed';
           } else {
-            week.videos = `${totalDuration} min of Videos left`;
+            week.videos = `${totalDuration} menit Video Pembelajaran tersisa`;
             week.status = 'in-progress';
           }
         });
@@ -120,8 +144,17 @@ export const CoursePage = (): JSX.Element => {
       }
     }
 
-    fetchData();
-  }, [id]);
+    if (userID === 0) {
+      return;
+    } else {
+      fetchData();
+    }
+
+  }, [userID, id]);
+
+  
+
+
 
   return (
     <div className='relative min-h-screen w-full flex flex-col'>
@@ -138,20 +171,36 @@ export const CoursePage = (): JSX.Element => {
 
       <main className='flex-grow'>
         <div className='max-w-[1440px] mx-auto px-14 md:px-20 lg:px-20 py-20 md:py-20 lg:py-32'>
+
           {/* Course Title and Description */}
           <section className='mb-6 md:mb-8 lg:mb-10'>
-            <h1 className='font-bold text-5xl sm:text-4xl md:text-4xl lg:text-5xl text-[#334fb4] mb-4 md:mb-6'>
+            <motion.h1 
+            variants={fadeIn('left', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.7}}
+            className='font-bold text-5xl sm:text-4xl md:text-4xl lg:text-5xl text-[#334fb4] mb-4 md:mb-6'>
               {courseTitle}
-            </h1>
-            <div className='text-lg sm:text-base md:text-lg space-y-3 md:space-y-4 lg:space-y-6'>
+            </motion.h1>
+            <motion.div 
+            variants={fadeIn('down', 0.1)}
+            initial='hidden'
+            whileInView={'show'}
+            viewport={{once: false, amount: 0.01}}
+            className='text-lg sm:text-base md:text-lg space-y-3 md:space-y-4 lg:space-y-6'>
               <p className='leading-relaxed'>
                 {courseDesc}
               </p>
-            </div>
+            </motion.div>
           </section>
 
           {/* Course Content */}
-          <section>
+          <motion.section
+          variants={fadeIn('up', 0.1)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{once: false, amount: 0.7}}
+          >
             <Card className='border border-[#337bbf] rounded-[10px] overflow-hidden'>
               <CardContent className='p-0'>
                 <Accordion type='single' collapsible className='w-full'>
@@ -164,7 +213,7 @@ export const CoursePage = (): JSX.Element => {
                       <AccordionTrigger className='px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 hover:no-underline'>
                         <div className='flex flex-col items-start w-full'>
                           <h3 className='font-bold text-lg sm:text-xl md:text-2xl text-[#337bbf]'>
-                            Week {week.week}
+                            Minggu ke-{week.week}
                           </h3>
                           <div className='flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4 mt-2 text-[10px] sm:text-xs font-medium text-[#337bbf]'>
                             <div className='flex items-center'>
@@ -182,19 +231,36 @@ export const CoursePage = (): JSX.Element => {
                       <AccordionContent className='px-3 sm:px-4 md:px-6 pb-4 sm:pb-5 md:pb-6'>
                         {week.content && (
                           <div className='space-y-3 sm:space-y-4 mt-2'>
-                            {week.content.map((item, itemIndex) => (
+                            {(week.week === 4
+                              ? [...week.content, {
+                                  title: 'Ujian',
+                                  type: 'Ujian',
+                                  duration: `${Math.round(duration / 60)} menit`,
+                                  icon: '/assassement-logo.png',
+                                  material_id: 0, // assign temporary or real ID
+                                  link: true
+                                }]
+                              : week.content
+                            ).map((item, itemIndex) => (
                               <div
                                 key={itemIndex}
                                 className='flex items-start gap-2 sm:gap-3 md:gap-4'
                               >
                                 {item.link ? (
-                                  <Link href={`/Educational/Learning/${item.material_id}`}>
+                                  <button onClick={() => {
+                                    if (item.material_id === 0) {
+                                      router.push(`/Educational/Exam/${id}`);
+                                    } else {
+                                      router.push(`/Educational/Learning/${item.material_id}`);
+                                    }
+                                  }}
+                                >
                                     <img
                                       className='w-5 h-5 sm:w-6 sm:h-6 md:w-[30px] md:h-[30px] object-cover'
                                       alt={`${item.type} icon`}
                                       src={item.icon}
                                     />
-                                  </Link>
+                                  </button>
                                 ) : (
                                   <img
                                     className='w-5 h-5 sm:w-6 sm:h-6 md:w-[30px] md:h-[30px] object-cover'
@@ -208,8 +274,7 @@ export const CoursePage = (): JSX.Element => {
                                     {item.title}
                                   </h4>
                                   <p className='font-normal text-[10px] sm:text-xs text-[#337bbf]'>
-                                    {item.type}&nbsp;&nbsp;•&nbsp;&nbsp;
-                                    {item.duration}
+                                    {item.type}&nbsp;&nbsp;•&nbsp;&nbsp;{item.duration}
                                   </p>
                                 </div>
                               </div>
@@ -222,7 +287,7 @@ export const CoursePage = (): JSX.Element => {
                 </Accordion>
               </CardContent>
             </Card>
-          </section>
+          </motion.section>
         </div>
       </main>
 

@@ -24,7 +24,9 @@ router.post('/', authMiddleware, authorizeRole(['admin', 'teacher']), materialCo
 // PUT update material (Admin & Teacher)
 // router.put('/:id', authMiddleware, authorizeRole(['admin', 'teacher']), materialController.updateMaterial);
 
-router.patch('/:id', authMiddleware, authorizeRole(['admin', 'teacher']), materialController.updateMaterial);
+// PATCH /materials/:id/status → update status (tandai user sudah akses)
+router.patch('/:id/status', authMiddleware, materialController.updateMaterialStatus);
+router.patch('/:id', authMiddleware, authorizeRole(['admin', 'teacher', 'student']), materialController.updateMaterial);
 
 // DELETE material (Admin & Teacher)
 router.delete('/:id', authMiddleware, authorizeRole(['admin', 'teacher']), materialController.deleteMaterial);

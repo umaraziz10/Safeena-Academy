@@ -37,9 +37,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     status: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1
+    type: DataTypes.TEXT, 
+    allowNull: false,
+    defaultValue: '[]',
+    get() {
+      const raw = this.getDataValue('status');
+      try {
+        return JSON.parse(raw || '[]');
+      } catch {
+        return [];
+      }
+    },
+    set(value) {
+      this.setDataValue('status', JSON.stringify(value));
     }
+  }
+
   }, {
     sequelize,
     modelName: 'Material',

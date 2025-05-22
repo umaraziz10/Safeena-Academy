@@ -10,6 +10,7 @@ export const Tables = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [consultations, setConsultations] = useState<any[]>([]); // Stores the fetched consultation data
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch consultations data from API
   useEffect(() => {
@@ -65,9 +66,6 @@ export const Tables = (): JSX.Element => {
       console.error('Error:', error);
     }
   };
-  
-
-  
   
   const handleDeleteBooking = async (bookingId: number) => {
     try {
@@ -135,42 +133,107 @@ export const Tables = (): JSX.Element => {
     );
   };
 
+  const filteredConsultations = consultations.filter((booking) =>
+    `${booking.id} ${booking.user.name} ${booking.psychologist.name}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b bg-white/10 py-12">
       <section className="w-full max-w-[1440px] mx-auto px-6 lg:px-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#337bbf] font-['Outfit',Helvetica] mb-8 md:mb-12">
-          Manage Bookings
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#337bbf] font-['Outfit',Helvetica] mb-8 md:mb-6">
+          Kelola Pemesanan
         </h1>
 
-        <div className="w-full overflow-x-auto rounded-xl shadow-lg bg-[#e6f4ff]">
+        {/* Search Bar */}
+        <div className="mb-8 md:mb-10 flex items-center gap-3 max-w-md w-full bg-white border border-[#b0d4f1] rounded-full px-4 py-2 shadow-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="#337bbf"
+            className="w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+            />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search bookings..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-transparent focus:outline-none text-[#337bbf] placeholder:text-[#a3c4e4] text-sm sm:text-base font-['Outfit',Helvetica]"
+          />
+        </div>
+
+        {/* Table */}
+        <div className="w-full overflow-x-auto rounded-2xl shadow-lg bg-[#f0f8ff]">
           <Table>
             <TableHeader>
-              <TableRow className="border-b-2 border-[#337bbf20]">
-                <TableHead className="text-left w-20 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Booking Id</TableHead>
-                <TableHead className="text-left w-48 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Name</TableHead>
-                <TableHead className="text-left w-64 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Psychologist</TableHead>
-                <TableHead className="text-left w-32 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Date</TableHead>
-                <TableHead className="text-left w-32 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Time</TableHead>
-                <TableHead className="text-left w-32 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Status</TableHead>
-                <TableHead className="text-center w-40 py-6 text-base sm:text-lg md:text-xl font-medium text-[#337bbf] font-['Outfit',Helvetica]">Action</TableHead>
+              <TableRow className="border-b-2 border-[#b0d4f1] bg-[#d6eaff]">
+                {[
+                  "Booking ID",
+                  "Name",
+                  "Psychologist",
+                  "Date",
+                  "Time",
+                  "Status",
+                  "Action",
+                ].map((head, i) => (
+                  <TableHead
+                    key={i}
+                    className={`py-5 text-left text-sm sm:text-base md:text-lg font-semibold text-[#225d99] font-['Outfit',Helvetica] ${
+                      head === "Action" ? "text-center w-40" : "w-auto"
+                    }`}
+                  >
+                    {head}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {consultations.slice(currentPage * 10, (currentPage + 1) * 10).map((booking, index) => (
-                <TableRow key={index} className={index % 2 === 0 ? "bg-white" : "bg-[#e6f4ff]"}>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">{booking.id}</TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">{booking.user.name}</TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">{booking.psychologist.name}</TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">{booking.consult_date}</TableCell>
-                  <TableCell className="py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base text-[#337bbf]">{booking.slot.start_time} - {booking.slot.end_time}</TableCell>
-                  <TableCell className={`py-4 text-left font-normal font-['Outfit',Helvetica] text-sm sm:text-base ${getStatusColor(booking.status)}`}>
-                    {booking.status}
-                  </TableCell>
-                  <TableCell className="py-4">
-                    <ActionButtons bookingId={booking.id} />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {filteredConsultations
+                .slice(currentPage * 10, (currentPage + 1) * 10)
+                .map((booking, index) => (
+                  <TableRow
+                    key={index}
+                    className={`transition duration-150 ${
+                      index % 2 === 0 ? "bg-white" : "bg-[#eef6fc]"
+                    } hover:bg-[#d4ecff]`}
+                  >
+                    <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
+                      {booking.id}
+                    </TableCell>
+                    <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
+                      {booking.user.name}
+                    </TableCell>
+                    <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica] truncate max-w-[180px]">
+                      {booking.psychologist.name}
+                    </TableCell>
+                    <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
+                      {booking.consult_date}
+                    </TableCell>
+                    <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
+                      {booking.slot.start_time} - {booking.slot.end_time}
+                    </TableCell>
+                    <TableCell
+                      className={`py-4 px-2 text-sm sm:text-base font-['Outfit',Helvetica] font-medium ${getStatusColor(
+                        booking.status
+                      )}`}
+                    >
+                      {booking.status}
+                    </TableCell>
+                    <TableCell className="py-4 px-2 text-center">
+                      <ActionButtons bookingId={booking.id} />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </div>

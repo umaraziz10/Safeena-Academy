@@ -87,3 +87,99 @@ exports.submitExam = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+ // Mengambil skor berdasarkan userId dan quizId
+exports.getScore = async (req, res) => {
+  const { userId, quizId } = req.query;
+
+  // Validasi input
+  if (!userId || !quizId) {
+    return res.status(400).json({ message: "userId and quizId are required" });
+  }
+
+  try {
+    // Cari submission berdasarkan userId dan quizId
+    const submission = await db.Submission.findOne({
+      where: { userId, quizId },
+      attributes: ['score', 'answers', 'createdAt'],
+    });
+
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found." });
+    }
+
+    // Kirim response dengan skor
+    res.json({
+      message: "Score retrieved successfully",
+      score: submission.score,
+      answers: submission.answers,
+      submittedAt: submission.createdAt,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Mengambil skor TERBARU berdasarkan userId dan quizId
+exports.getLatestScore = async (req, res) => {
+  const { userId, quizId } = req.query;
+
+  if (!userId || !quizId) {
+    return res.status(400).json({ message: "userId and quizId are required" });
+  }
+
+  try {
+    const submission = await db.Submission.findOne({
+      where: { userId, quizId },
+      order: [['createdAt', 'DESC']], // Ambil submission terbaru
+      attributes: ['score', 'answers', 'createdAt'],
+    });
+
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found." });
+    }
+
+    res.json({
+      message: "Latest score retrieved successfully",
+      score: submission.score,
+      answers: submission.answers,
+      submittedAt: submission.createdAt,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Mengambil skor TERTINGGI berdasarkan userId dan quizId
+exports.getHighestScore = async (req, res) => {
+  const { userId, quizId } = req.query;
+
+  if (!userId || !quizId) {
+    return res.status(400).json({ message: "userId and quizId are required" });
+  }
+
+  try {
+    const submission = await db.Submission.findOne({
+      where: { userId, quizId },
+      order: [['score', 'DESC'], ['createdAt', 'DESC']], // Skor tertinggi, jika sama ambil yang terbaru
+      attributes: ['score', 'answers', 'createdAt'],
+    });
+
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found." });
+    }
+
+    res.json({
+      message: "Highest score retrieved successfully",
+      score: submission.score,
+      answers: submission.answers,
+      submittedAt: submission.createdAt,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

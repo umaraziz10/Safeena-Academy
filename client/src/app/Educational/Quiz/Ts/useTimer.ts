@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
 
 interface TimerConfig {
-  initialMinutes: number;
+  initialSeconds: number;
   onTimeEnd?: () => void;
 }
 
-export const useTimer = ({ initialMinutes, onTimeEnd }: TimerConfig) => {
-  const [timeLeft, setTimeLeft] = useState(initialMinutes * 60);
+export const useTimer = ({ initialSeconds, onTimeEnd }: TimerConfig) => {
+  const [timeLeft, setTimeLeft] = useState(initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
+
+  // Add this effect to update timeLeft when initialSeconds changes
+  useEffect(() => {
+    setTimeLeft(initialSeconds);
+    setIsRunning(true);
+  }, [initialSeconds]);
 
   useEffect(() => {
     if (!isRunning || timeLeft <= 0) return;

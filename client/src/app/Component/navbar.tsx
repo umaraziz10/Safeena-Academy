@@ -5,29 +5,50 @@ import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { Menu, X, ChevronDown, User } from "lucide-react";
+import { fetchWithToken } from "@/lib/fetchWithToken";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { name: "Home", href: "/" },
-  {
-    name: "Courses",
-    href: "/Educational"
-    // submenu: [
-    //   { name: "Counseling", href: "/services/counseling" },
-    //   { name: "Workshops", href: "/services/workshops" },
-    //   { name: "Group Therapy", href: "/services/group-therapy" },
-    // ],
-  },
-  { name: "Consultation", href: "/Psychologist" },
-  // { name: "About Us", href: "/about" },
-  { name: "Contact", href: "/Chatbot" },
-];
+function getNavLinks(Role: string) {
+  return [
+    { 
+      name: "Beranda",
+      href: Role === 'admin' ? "/Admin" : Role === 'teacher' ? "/Teacher" :"/"
+    },
+    {
+      name: "Kursus",
+      href: Role === 'admin' || Role === 'teacher' ? "/Admin#course" : "/Educational"
+    },
+    { name: "Konsultasi", href: "/Psychologist" },
+    { name: "Layanan Chat", href: "/Chatbot" },
+  ];
+}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [Role, setRole] = useState('');
+  const [Email, setEmail] = useState('');
+  const navLinks = getNavLinks(Role);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try{
+        const nameRes = await fetchWithToken('/users/me');
+        const nameData = await nameRes.json();
+
+        setName(nameData.name);
+        setRole(nameData.role);
+        setEmail(nameData.email);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    }
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,7 +112,10 @@ export default function Navbar() {
           scrolled ? "max-w-[88rem]" : "max-w-[80rem]"
         )}
       >
-        <Link href="/" className="relative z-10">
+
+        <Link 
+        href={Role === 'admin' ? "/Admin" : Role === 'teacher' ? "/Teacher" : "/"}
+        className="relative z-10">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 md:w-12 md:h-12 overflow-hidden rounded-full border-2 border-forest-500 z-50 shadow-md">
               <Image
@@ -122,7 +146,7 @@ export default function Navbar() {
                   <div className="relative">
                     <button
                       onClick={() => toggleSubmenu(link.name)}
-                      className="flex items-center px-3 py-2 text-forest-800 font-medium transition-colors duration-300 hover:text-emerald-500 rounded-md hover:bg-forest-50"
+                      className="flex items-center px-3 py-2 text-forest-800 font-medium transition-colors duration-300 hover:text-[#337bbf] rounded-md"
                     >
                       {link.name}
                       <ChevronDown
@@ -139,7 +163,7 @@ export default function Navbar() {
                           <Link
                             key={subItem.name}
                             href={subItem.href}
-                            className="block px-4 py-2 text-sm text-forest-700 hover:bg-sage-50 hover:text-emerald-500"
+                            className="block px-4 py-2 text-sm text-forest-700 hover:bg-sage-50 hover:text-[#337bbf]"
                           >
                             {subItem.name}
                           </Link>
@@ -150,12 +174,12 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={link.href}
-                    className="block px-3 py-2 text-forest-800 font-medium transition-colors duration-300 hover:text-emerald-500 rounded-md hover:bg-forest-50"
+                    className="block px-3 py-2 text-forest-800 font-medium transition-colors duration-300 hover:text-[#337bbf] rounded-md"
                   >
                     {link.name}
                   </Link>
                 )}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#337bbf] transition-all duration-300 group-hover:w-full"></span>
               </li>
             ))}
           </ul>
@@ -163,14 +187,53 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-4">
           {isLoggedIn ? (
-            <Link href={"/Login"}>
+            <div className="relative inline-block text-left">
+              {/* Toggle Button */}
               <button
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-full border-2 border-red-500 text-red-600 font-medium transition-all duration-300 hover:bg-forest-50 hover:border-forest-600"
+                onClick={() => setOpen(!open)}
+                className="flex items-center space-x-2 px-4 py-2 rounded-full border-2 border-gray-300 font-medium transition-all duration-300 hover:border-[#337bbf]"
+                aria-haspopup="true"
+                aria-expanded={open}
               >
-                Logout
+                <img
+                  src="/user.png"
+                  alt="User"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                <span className="text-gray-800">{name}</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
-            </Link>
+
+              {/* Dropdown Menu */}
+              {open && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                  <div className="px-4 py-3 text-gray-700 border-b border-gray-200">
+                    <p className="text-sm">Selamat datang, <strong>{name}</strong></p>
+                    <p className="text-sm mt-1"><strong>{Email}</strong></p>
+                  </div>
+                  <Link href={'/Login'}>
+                    <div className="px-4 py-2 flex items-center cursor-pointer hover:bg-red-100"
+                      onClick={handleLogout}
+                    >
+                      <img
+                        src="/logout.png"
+                        alt="Logout"
+                        className="w-5 h-5 mr-2 object-contain"
+                      />
+                      <span className="text-red-600 font-medium">Logout</span>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Link href={"/Login"}>
@@ -178,9 +241,11 @@ export default function Navbar() {
                   Login
                 </button>
               </Link>
-              <button className="px-4 py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium transition-all duration-300 hover:bg-forest-50 hover:border-forest-600">
-                Get Help
-              </button>
+              <Link href={"/Chatbot"}>
+                <button className="px-4 py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium transition-all duration-300 hover:bg-forest-50 hover:border-forest-600">
+                  Get Help
+                </button>
+              </Link>
             </>
           )}
         </div>
@@ -205,7 +270,7 @@ export default function Navbar() {
         )}
       >
         <div className="container bg-white mx-auto px-6 overflow-y-auto max-h-[calc(100vh-5rem)]">
-          <ul className="flex flex-col  space-y-4 py-8">
+          <ul className="flex flex-col  space-y-2 py-6">
             {navLinks.map((link) => (
               <li
                 key={link.name}
@@ -215,7 +280,7 @@ export default function Navbar() {
                   <div>
                     <button
                       onClick={() => toggleSubmenu(link.name)}
-                      className="flex items-center justify-between w-full py-2 text-xl font-medium text-forest-800 border-b border-sage-200"
+                      className="flex items-center justify-between w-full px-3 py-2 text-base font-medium text-forest-800 rounded-md hover:bg-sage-100 transition-colors duration-300"
                     >
                       {link.name}
                       <ChevronDown
@@ -232,7 +297,7 @@ export default function Navbar() {
                           <Link
                             key={subItem.name}
                             href={subItem.href}
-                            className="block py-2 text-lg text-forest-700 hover:text-emerald-500"
+                            className="block px-3 py-2 text-sm text-forest-700 hover:bg-sage-50 hover:text-[#337bbf] rounded-md"
                             onClick={() => setIsOpen(false)}
                           >
                             {subItem.name}
@@ -244,7 +309,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={link.href}
-                    className="block py-2 text-xl font-medium text-forest-800 hover:text-emerald-500 border-b border-sage-200"
+                    className="block px-3 py-2 text-base font-medium text-forest-800 hover:text-[#337bbf] rounded-md transition-colors duration-300"
                     onClick={() => setIsOpen(false)}
                   >
                     {link.name}
@@ -252,14 +317,50 @@ export default function Navbar() {
                 )}
               </li>
             ))}
-            <li className="mobile-menu-item pt-4 flex flex-col gap-3 transition-all duration-300">
-              <button className="w-full py-3 rounded-full border-2 border-forest-500 text-forest-600 font-medium">
-                Login
-              </button>
-              <button className="w-full py-3 rounded-full border-2 border-forest-500 text-forest-600 font-medium">
-                Get Help
-              </button>
-            </li>
+            {isLoggedIn ? (
+              <li className="mobile-menu-item pt-4 flex flex-col gap-3 transition-all duration-300 border-t border-gray-200">
+                <div className="flex items-center gap-3 px-4">
+                  <img
+                    src="/user.png"
+                    alt="User"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="text-left">
+                    <p className="text-sm text-gray-800 font-medium">{name}</p>
+                    <p className="text-xs text-gray-600">{Email}</p>
+                  </div>
+                </div>
+
+                <Link href="/Login">
+                  <div
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 text-red-600 font-medium border-2 border-red-200 rounded-full hover:bg-red-100 transition-all"
+                    onClick={handleLogout}
+                  >
+                    <img
+                      src="/logout.png"
+                      alt="Logout"
+                      className="w-5 h-5 object-contain"
+                    />
+                    <span>Logout</span>
+                  </div>
+                </Link>
+              </li>
+            ) : (
+              <li className="mobile-menu-item pt-4 flex flex-col gap-3 transition-all duration-300">
+                <Link
+                  href="/Login"
+                  className="w-full text-center py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium hover:bg-forest-50 hover:border-forest-600 transition-all"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/Chatbot"
+                  className="w-full text-center py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium hover:bg-forest-50 hover:border-forest-600 transition-all"
+                >
+                  Get Help
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

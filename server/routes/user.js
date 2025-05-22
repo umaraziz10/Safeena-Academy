@@ -4,6 +4,9 @@ const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { authorizeRole } = require('../middlewares/authorizeRole');
 
+// GET profil user yang sedang login
+router.get('/me', authMiddleware, userController.getCurrentUser);
+
 // GET semua user (admin & teacher)
 router.get('/', authMiddleware, authorizeRole(['admin', 'teacher']), userController.getAllUsers);
 

@@ -19,10 +19,13 @@ type Question = {
   id: string;
   text: string;
   options: Option[];
+  // duration: number;
 };
 
 function App() {
   const { toast } = useToast();
+  const [duration, setDuration] = useState(0);
+  const [userID, setuserID] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]); // State untuk menyimpan data kuiz
   const [answers, setAnswers] = useState<Record<string, string>>({
     "1": "",
@@ -34,24 +37,25 @@ function App() {
 
   const { id } = useParams();
 
+
   const handleSubmit = async () => {
     if (!id) {
       alert("Course ID tidak ditemukan");
       return;
     }
-  
+
     // Konversi Record<string, string> ke array of number (index jawaban)
     const answerArray = questions.map((q) => {
       const selected = answers[q.id];
-      return selected ? parseInt(selected) - 1 : 0; // default 0 kalau kosong
+      return selected ? parseInt(selected) - 1 : -1; // default -1 kalau kosong
     });
-  
+
     const payload = {
-      userId: 1, // Ganti sesuai ID user login
+      userId: userID, // Ganti sesuai ID user login
+      quizId: id,
       answers: answerArray,
-      courseId: id,
     };
-  
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/quiz/submit`, {
         method: "POST",
@@ -60,14 +64,15 @@ function App() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to submit");
       }
-  
-      const data = await response.json();
-      const nilai = data.score * 100 / 3;
-      alert(`Quiz submitted!\nScore kamu: ${nilai}/100`);
+
+      // const data = await response.json(); // You can keep if you want to do something with the response
+
+      // Navigate to /Educational/Exam/{id}
+      window.location.href = `/Educational/Exam/${id}`;
     } catch (error) {
       toast({
         title: "Error saat submit",
@@ -77,17 +82,6 @@ function App() {
       console.error(error);
     }
   };
-
-  const { formattedTime } = useTimer({
-    initialMinutes: 30,
-    onTimeEnd: () => {
-      toast({
-        title: "Time's up!",
-        description: "Please submit your answers now.",
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({
@@ -100,6 +94,7 @@ function App() {
     const fetchQuestions = async () => {
       try {
         const response = await fetchWithToken(`/quiz/${id}`);
+        const responseUser = await fetchWithToken('/users/me');
   
         if (!response.ok) {
           console.error("Failed to fetch questions");
@@ -107,17 +102,27 @@ function App() {
         }
   
         const data = await response.json();
+        const userData = await responseUser.json();
   
-        const mappedQuestions = data.map((item: any) => ({
+        setDuration(data.duration);
+        setuserID(userData.id);
+        
+
+        if (!Array.isArray(data.questions)) {
+          throw new Error('questions is not an array');
+        }
+
+        const mappedQuestions = data.questions.map((item: any) => ({
           id: item.id.toString(),
           text: item.text,
-          options: item.options.map((option: any, index: number) => ({
+          options: JSON.parse(item.options).map((option: any, index: number) => ({
             id: (index + 1).toString(),
             text: option.toString(),
           })),
         }));
-  
+
         setQuestions(mappedQuestions);
+
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -125,6 +130,20 @@ function App() {
   
     fetchQuestions();
   }, []);
+
+  const { formattedTime } = useTimer({
+    initialSeconds: duration,
+    onTimeEnd: () => {
+      toast({
+        title: "Waktu Habis",
+        description: "Silahkan Kumpul Jawaban Kamu",
+        variant: "destructive",
+      });
+    },
+  });
+  
+
+
 
   return (
     <div
@@ -143,20 +162,20 @@ function App() {
             className="flex items-center gap-1 text-[#337bbf] bg-[#ffee5a] hover:bg-[#ffee5a]/90 rounded-full px-4 py-2"
           >
             <ChevronLeft className="h-4 w-4" />
-            <Link href="/LandingPage">
-            <span className="font-medium">Back</span>
+            <Link href={`/Educational/Courses/${id}`}>
+            <span className="font-medium">Kembali</span>
             </Link>
           </Button>
 
           <div className="mt-2 sm:mt-0 sm:ml-2">
-            <h1 className="text-[#337bbf] text-xl font-medium">Week 1 Quiz</h1>
-            <p className="text-[#337bbf] text-sm">Graded Assessment • 30 min</p>
+            <h1 className="text-[#337bbf] text-xl font-medium">Ujian Course {id}</h1>
+            <p className="text-[#337bbf] text-sm">Ujian • {Math.round(duration/60)} min</p>
           </div>
         </div>
 
         <div className="bg-white/80 border border-[#337bbf]/30 rounded-md px-4 py-2 self-end sm:self-auto">
           <p className="text-[#337bbf] text-center">
-            <span className="text-xs">Time Left</span>
+            <span className="text-xs">Waktu Tersisa</span>
             <br />
             <span className="font-medium">{formattedTime}</span>
           </p>
@@ -165,10 +184,10 @@ function App() {
 
       <main className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
         {questions.length > 0 ? (
-          questions.map((question) => (
+          questions.map((question, index) => (
             <div key={question.id} className="space-y-3 sm:space-y-4">
               <h2 className="text-[#000000] font-medium text-base sm:text-lg">
-                {question.id}. {question.text}
+                {index + 1}. {question.text}
               </h2>
 
               <RadioGroup
@@ -198,12 +217,12 @@ function App() {
             </div>
           ))
         ) : (
-          <p>Loading questions...</p>
+          <p>Memuat pertanyaan...</p>
         )}
 
         <div className="pt-4 sm:pt-6 pb-8">
           <Button onClick={handleSubmit} className="bg-[#ffee5a] hover:bg-[#ffee5a]/90 text-[#337bbf] font-medium px-8 sm:px-10 py-2 rounded-md border-none">
-            Submit
+            Kumpul
           </Button>
         </div>
       </main>

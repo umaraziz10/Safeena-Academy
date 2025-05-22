@@ -11,28 +11,6 @@ export const Search = (): JSX.Element => {
           placeholder="Search Booking"
         />
       </div>
-
-      <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-        <Button
-          variant="outline"
-          className="flex-1 sm:flex-none h-[42px] bg-[#337bbf] rounded-[10px] border-none flex items-center gap-2"
-        >
-          <FilterIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-          <span className="[font-family:'Outfit',Helvetica] font-medium text-[13px] sm:text-[15px] text-[#edd500]">
-            Filter
-          </span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="flex-1 sm:flex-none h-[42px] rounded-[10px] border border-solid border-[#337bbf] flex items-center gap-2"
-        >
-          <SortDescIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[#337bbf]" />
-          <span className="[font-family:'Outfit',Helvetica] font-bold text-[13px] sm:text-[15px] text-[#337bbf]">
-            Sort by
-          </span>
-        </Button>
-      </div>
     </div>
   )
 }

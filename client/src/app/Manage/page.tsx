@@ -1,10 +1,39 @@
-import React from 'react';
+'use client'
 
-import { Search } from './search';
+import React, { useEffect, useState} from 'react';
 import { Tables } from './table';
 import Navbar from '../Component/navbar';
 import { Footer } from '../Component/Footer';
+import { useRouter } from 'next/navigation';
+import { fetchWithToken } from '@/lib/fetchWithToken';
+
 export default function Home() {
+  const [role, setRole] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    async function fetchRole() {
+      const res = await fetchWithToken('/users/me');
+      const data = await res.json();
+      if (data.message === 'Unauthorized: No token provided') {
+        setRole('No Role');
+      } else {
+        setRole(data.role);
+      }
+    }
+    fetchRole();
+  }, []);
+
+  useEffect(() => {
+    if (role && role !== 'admin') {
+      router.push('/');
+    }
+  }, [role, router]);
+
+  // Render nothing while checking role
+  if (!role) return null;
+  if (role !== 'admin') return null;
+  
   return (
     <div
       className='flex flex-col min-h-screen w-full'

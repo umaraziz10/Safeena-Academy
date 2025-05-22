@@ -57,90 +57,6 @@ exports.createConsultation = async (req, res) => {
   }
 };
 
-// // GET ALL
-// exports.getAllConsultations = async (req, res) => {
-//   try {
-//     const consultations = await Consultation.findAll({
-//       include: ['slot', 'psychologist']
-//     });
-
-//     const now = dayjs().tz('Asia/Jakarta');
-
-//     for (const consult of consultations) {
-//       const consultDate = dayjs(consult.consult_date).tz('Asia/Jakarta');
-//       const slotEnd = dayjs(${consult.consult_date} ${consult.slot.end_time}).tz('Asia/Jakarta');
-
-//       if (slotEnd.isBefore(now) && consult.status !== 'Done') {
-//         consult.status = 'Done';
-//         await consult.save();
-      
-//         // Tambah count hanya jika sebelumnya bukan 'Done'
-//         if (consult._previousDataValues.status !== 'Done') {
-//           const psychologist = await Psychologist.findByPk(consult.psychologist_id);
-//           if (psychologist) {
-//             psychologist.handled_count += 1;
-//             await psychologist.save();
-//           }
-//         }
-//       }
-      
-//     }
-
-//     const converted = consultations.map(c => ({
-//       ...c.toJSON(),
-//       consult_date: toWIB(c.consult_date)
-//     }));
-
-//     res.status(200).json({ consultations: converted });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Server error', error });
-//   }
-// };
-
-
-
-// //GET BY ID
-// exports.getConsultationById = async (req, res) => {
-//   try {
-//     const consultation = await Consultation.findByPk(req.params.id, {
-//       include: ['slot', 'psychologist']
-//     });
-
-//     if (!consultation) {
-//       return res.status(404).json({ message: 'Consultation not found' });
-//     }
-
-//     const now = dayjs().tz('Asia/Jakarta');
-//     const slotEnd = dayjs(${consultation.consult_date} ${consultation.slot.end_time}).tz('Asia/Jakarta');
-
-//     if (slotEnd.isBefore(now) && consult.status !== 'Done') {
-//       consult.status = 'Done';
-//       await consult.save();
-    
-//       // Tambah count hanya jika sebelumnya bukan 'Done'
-//       if (consult._previousDataValues.status !== 'Done') {
-//         const psychologist = await Psychologist.findByPk(consult.psychologist_id);
-//         if (psychologist) {
-//           psychologist.handled_count += 1;
-//           await psychologist.save();
-//         }
-//       }
-//     }
-    
-
-//     res.status(200).json({
-//       consultation: {
-//         ...consultation.toJSON(),
-//         consult_date: toWIB(consultation.consult_date)
-//       }
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Server error', error });
-//   }
-// };
-
 // GET ALL
 exports.getAllConsultations = async (req, res) => {
   try {
@@ -272,6 +188,91 @@ exports.deleteConsultation = async (req, res) => {
 
     await consultation.destroy();
     res.status(200).json({ message: 'Consultation deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+ exports.getOngoingConsultationsForUser = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+
+    const consultations = await Consultation.findAll({
+      where: { user_id, status: ['Pending', 'Approved']}, // Hanya konsultasi yang 'Pending'
+      include: [
+        {
+          model: Psychologist,
+          as: 'psychologist', // Relasi ke model Psychologist
+          attributes: ['name', 'location', 'location_url', 'image_path'], // Menambahkan image_path
+        },
+        {
+          model: TimeSlot,
+          as: 'slot',
+          attributes: ['start_time', 'end_time'], // Menambahkan start_time dan end_time
+        },
+      ],
+    });
+
+    if (!consultations) {
+      return res.status(404).json({ message: 'No ongoing consultations found' });
+    }
+
+    // Convert consult_date to WIB and format response
+    const ongoingConsultations = consultations.map(consult => ({
+      type_of_service: consult.type_of_service,
+      consult_date: consult.consult_date,
+      start_time: consult.slot.start_time,
+      end_time: consult.slot.end_time,
+      location: consult.psychologist.location,
+      location_url: consult.psychologist.location_url,
+      image_path: consult.psychologist.image_path,
+    }));
+
+    res.status(200).json({ ongoing_consultations: ongoingConsultations });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+exports.getOngoingConsultationsForUser = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+
+    const consultations = await Consultation.findAll({
+     where: { user_id, status: ['Pending', 'Approved']},
+      include: [
+        {
+          model: Psychologist,
+          as: 'psychologist',
+          attributes: ['id', 'name', 'location', 'location_url', 'image_path'], 
+        },
+        {
+          model: TimeSlot,
+          as: 'slot',
+          attributes: ['start_time', 'end_time'],
+        },
+      ],
+    });
+
+    if (!consultations || consultations.length === 0) {
+      return res.status(404).json({ message: 'No ongoing consultations found' });
+    }
+
+    const ongoingConsultations = consultations.map(consult => ({
+      type_of_service: consult.type_of_service,
+      consult_date: consult.consult_date,
+      start_time: consult.slot.start_time,
+      end_time: consult.slot.end_time,
+      psychologist_id: consult.psychologist.id,                
+      psychologist_name: consult.psychologist.name,
+      location: consult.psychologist.location,
+      location_url: consult.psychologist.location_url,
+      image_path: consult.psychologist.image_path,
+    }));
+
+    res.status(200).json({ ongoing_consultations: ongoingConsultations });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error', error });

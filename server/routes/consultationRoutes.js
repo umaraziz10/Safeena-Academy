@@ -18,6 +18,8 @@ router.patch(
   consultationController.updateConsultationStatus
 );
 
+
+router.get('/ongoing-consult', authMiddleware, consultationController.getOngoingConsultationsForUser);
 router.get('/', authMiddleware, consultationController.getAllConsultations);
 router.get('/:id', authMiddleware, consultationController.getConsultationById);
 router.delete('/:id', authMiddleware, consultationController.deleteConsultation);

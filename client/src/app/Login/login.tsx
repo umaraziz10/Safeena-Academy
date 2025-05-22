@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { Mail, User, EyeOff, Eye, Github, Twitter } from "lucide-react"
 import FallingLeaves from "../Component/falling-leaves"
 import SuccessModal from "./Success"
-import VerifyModal from "./Verify"
+import { motion } from "framer-motion"
+import { fadeIn } from "../variant"
 
 type FormType = "login" | "register"
 
@@ -54,10 +55,32 @@ export default function LoginPage() {
       }
 
       if (formType === "login" && data.token) {
-        // Save the token in a cookie
-        document.cookie = `token=Bearer ${data.token}; path=/; max-age=3600;`
-        router.push("/") // Redirect after login success
-        setShowVerifyModal(true)
+        // Save token in cookie
+        const token = `Bearer ${data.token}`;
+        document.cookie = `token=${token}; path=/; max-age=3600;`;
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/me`, {
+          method: "GET",
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json"
+          }
+        })
+          .then(res => res.json())
+          .then(user => {
+            if (user.role === "admin") {
+              router.push("/Admin");
+            } else if (user.role === "teacher") {
+              router.push("/Teacher");
+            } else {
+              router.push("/");
+            }
+            setShowVerifyModal(true);
+          })
+          .catch(err => {
+            console.error("Failed to fetch user data:", err);
+            // fallback in case of error
+            router.push("/");
+          });
       }
 
       if (formType === "register" && data.message) {
@@ -103,216 +126,148 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-offwhite via-teal-light to-primary-light flex items-center justify-center p-4 md:p-6 lg:p-8">
-      <FallingLeaves />
-      <div
-        className={`container mx-auto max-w-8xl z-10 transition-opacity duration-1000 ${mounted ? "opacity-100" : "opacity-0"} ${showVerifyModal || showSuccessModal ? "blur-sm" : ""}`}
-      >
-        <div className="flex flex-col md:flex-row items-center justify-center gap-0 lg:gap-0">
-          <div className="w-full md:w-1/2 lg:w-3/5 flex flex-col items-center md:items-end md:mb-0">
-            <div
-              className={`relative w-full max-w-md md:max-w-lg lg:max-w-2xl transition-all duration-700 transform ${mounted ? "translate-y-0" : "translate-y-8"}`}
-            >
-              <div className="rounded-2xl overflow-hidden transition-all duration-500 " style={{ aspectRatio: "1.21" }}>
-                <img src="/IconLogin.png" alt="Mental Health Support" className="w-full h-full object-cover object-center" />
-              </div>
+  <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-offwhite via-teal-light to-primary-light flex items-center justify-center px-4 md:px-8 py-6 md:py-12">
+    <FallingLeaves />
+
+    <div className={`container mx-auto max-w-screen-xl z-10 transition-opacity duration-1000 ${mounted ? "opacity-100" : "opacity-0"} ${showVerifyModal || showSuccessModal ? "blur-sm" : ""}`}>
+      <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
+        {/* Image Section */}
+        <div 
+        className="w-full md:w-1/2 lg:w-3/5 flex items-center justify-center">
+          <motion.div 
+          variants={fadeIn('right', 0.1)}
+          initial='hidden'
+          whileInView={'show'}
+          viewport={{once: false, amount: 0.65}}
+          className={`relative w-full max-w-md md:max-w-lg lg:max-w-2xl transition-all duration-700 transform ${mounted ? "translate-y-0" : "translate-y-8"}`}>
+            <div className="rounded-3xl overflow-hidden shadow-xl transition-all duration-500" style={{ aspectRatio: "1.21" }}>
+              <img src="/IconLogin.png" alt="Mental Health Support" className="w-full h-full object-cover object-center" />
             </div>
-          </div>
+          </motion.div>
+        </div>
 
-          <div className={`w-full md:w-1/2 lg:w-2/5 max-w-md transition-all duration-700 transform ${mounted ? "translate-y-0" : "translate-y-8"}`}>
-            <div className="form-container bg-white/95 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-grayblue/30 transition-all duration-300">
-              <div className="text-center mb-6 md:mb-8 transition-all duration-300">
-                <h1 className="text-xl md:text-2xl font-semibold text-primary-dark mb-2">
-                  {formType === "login" ? "Welcome Back" : "Create Account"}
-                </h1>
-                <p className="text-sm md:text-base text-primary mt-2 transition-all duration-300">
-                  {formType === "login"
-                    ? "Your mental wellness journey continues here"
-                    : "Begin your path to mental wellness with us"}
-                </p>
-              </div>
+        {/* Form Section */}
+        <motion.div 
+        variants={fadeIn('down', 0.1)}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: false, amount: 0.65 }}
+        whileHover={{ 
+          scale: 1.05, 
+          boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.15)" 
+        }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 250, 
+          damping: 20 
+        }}
+        className={`w-full md:w-1/2 lg:w-2/5 max-w-md transition-all duration-700 transform ${mounted ? "translate-y-0" : "translate-y-8"}`}>
+          <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-6 md:p-8 border border-grayblue/30 shadow-lg">
+            <div className="text-center mb-6">
+              <h1 className="text-2xl md:text-3xl font-semibold text-primary-dark">{formType === "login" ? "Welcome Back" : "Create Account"}</h1>
+              <p className="text-sm md:text-base text-primary mt-2">{formType === "login" ? "Your mental wellness journey continues here" : "Begin your path to mental wellness with us"}</p>
+            </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6 transition-all duration-300">
-                {formType === "register" && (
-                  <div className="relative transition-all duration-500 animate-fadeIn">
-                    <input
-                      type="text"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg border border-grayblue focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none peer placeholder-transparent bg-offwhite/50"
-                      placeholder="Full Name"
-                      required
-                    />
-                    <label
-                      htmlFor="name"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none text-primary/70
-                        ${name ? "-top-2 text-sm bg-white px-1" : "top-3"} 
-                        peer-focus:-top-2 peer-focus:text-sm peer-focus:bg-white peer-focus:px-1 peer-focus:text-primary`}
-                    >
-                      Full Name
-                    </label>
-                    <User className="absolute right-4 top-3.5 h-5 w-5 text-primary/70 transition-all duration-300" />
-                  </div>
-                )}
-
-                <div className="relative transition-all duration-300">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {formType === "register" && (
+                <div className="relative animate-fadeIn">
                   <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-grayblue focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none peer placeholder-transparent bg-offwhite/50"
-                    placeholder="Email"
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-grayblue bg-offwhite/60 placeholder-transparent outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 peer"
+                    placeholder="Full Name"
                     required
                   />
-                  <label
-                    htmlFor="email"
-                    className={`absolute left-4 transition-all duration-200 pointer-events-none text-primary/70
-                      ${email ? "-top-2 text-sm bg-white px-1" : "top-3"} 
-                      peer-focus:-top-2 peer-focus:text-sm peer-focus:bg-white peer-focus:px-1 peer-focus:text-primary`}
-                  >
-                    Email Address
-                  </label>
-                  <Mail className="absolute right-4 top-3.5 h-5 w-5 text-primary/70 transition-all duration-300" />
+                  <label htmlFor="name" className={`absolute left-4 text-primary/70 transition-all duration-200 pointer-events-none ${name ? "-top-2 text-sm bg-white px-1" : "top-3"} peer-focus:-top-2 peer-focus:text-sm peer-focus:bg-white peer-focus:px-1 peer-focus:text-primary`}>Full Name</label>
+                  <User className="absolute right-4 top-3.5 h-5 w-5 text-primary/70" />
+                </div>
+              )}
+
+              <div className="relative">
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-grayblue bg-offwhite/60 placeholder-transparent outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 peer"
+                  placeholder="Email"
+                  required
+                />
+                <label htmlFor="email" className={`absolute left-4 text-primary/70 transition-all duration-200 pointer-events-none ${email ? "-top-2 text-sm bg-white px-1" : "top-3"} peer-focus:-top-2 peer-focus:text-sm peer-focus:bg-white peer-focus:px-1 peer-focus:text-primary`}>Email Address</label>
+                <Mail className="absolute right-4 top-3.5 h-5 w-5 text-primary/70" />
+              </div>
+
+              <div className="space-y-2">
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-grayblue bg-offwhite/60 placeholder-transparent outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 peer"
+                    placeholder="Password"
+                    required
+                  />
+                  <label htmlFor="password" className={`absolute left-4 text-primary/70 transition-all duration-200 pointer-events-none ${password ? "-top-2 text-sm bg-white px-1" : "top-3"} peer-focus:-top-2 peer-focus:text-sm peer-focus:bg-white peer-focus:px-1 peer-focus:text-primary`}>Password</label>
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-3.5 text-primary/70 hover:text-primary-dark transition duration-300">
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
 
-                <div className="space-y-2 transition-all duration-300">
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg border border-grayblue focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none peer placeholder-transparent bg-offwhite/50"
-                      placeholder="Password"
-                      required
-                    />
-                    <label
-                      htmlFor="password"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none text-primary/70
-                        ${password ? "-top-2 text-sm bg-white px-1" : "top-3"} 
-                        peer-focus:-top-2 peer-focus:text-sm peer-focus:bg-white peer-focus:px-1 peer-focus:text-primary`}
-                    >
-                      Password
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-3.5 text-primary/70 hover:text-primary transition-colors duration-300"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5 transition-all duration-300" />
-                      ) : (
-                        <Eye className="h-5 w-5 transition-all duration-300" />
-                      )}
-                    </button>
-                  </div>
-
-                  {formType === "register" && password && (
-                    <div className="space-y-1 transition-all duration-500 animate-fadeIn">
-                      <div className="flex gap-2">
-                        {[...Array(4)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded-full transition-all duration-500 ${
-                              i < passwordStrength
-                                ? ["bg-red-400", "bg-accent", "bg-mint", "bg-primary"][passwordStrength - 1]
-                                : "bg-grayblue"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-xs text-primary/70 transition-all duration-300">
-                        {["Weak", "Fair", "Good", "Strong"][Math.max(passwordStrength - 1, 0)] || "Add a password"}
-                      </p>
+                {formType === "register" && password && (
+                  <div className="space-y-1 animate-fadeIn">
+                    <div className="flex gap-2">
+                      {[...Array(4)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-all duration-500 ${i < passwordStrength ? ["bg-red-400", "bg-accent", "bg-mint", "bg-primary"][passwordStrength - 1] : "bg-grayblue"}`}
+                        />
+                      ))}
                     </div>
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center overflow-hidden relative group"
-                >
-                  <span className="absolute inset-0 w-full h-full transition-all duration-300 scale-0 group-hover:scale-100 bg-accent/10 rounded-lg"></span>
-                  {loading ? (
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                  ) : formType === "login" ? (
-                    "Sign In"
-                  ) : (
-                    "Create Account"
-                  )}
-                </button>
-
-                <div className="relative my-8 transition-all duration-300">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-grayblue"></div>
+                    <p className="text-xs text-primary/70">
+                      {["Weak", "Fair", "Good", "Strong"][Math.max(passwordStrength - 1, 0)] || "Add a password"}
+                    </p>
                   </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-primary/70">Or continue with</span>
-                  </div>
-                </div>
+                )}
+              </div>
 
-                <div className="grid grid-cols-2 gap-2 md:gap-4 transition-all duration-300">
-                  <button
-                    type="button"
-                    className="flex items-center justify-center gap-1 md:gap-2 py-2 md:py-2.5 border border-grayblue rounded-lg hover:bg-accent/5 transition-all duration-300 "
-                  >
-                    <Github className="w-4 h-4 md:w-5 md:h-5 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs md:text-sm font-medium">Github</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center gap-1 md:gap-2 py-2 md:py-2.5 border border-grayblue rounded-lg hover:bg-accent/5 transition-all duration-300 "
-                  >
-                    <Twitter className="w-4 h-4 md:w-5 md:h-5 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs md:text-sm font-medium">Twitter</span>
-                  </button>
-                </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-dark focus:ring-4 focus:ring-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative group"
+              >
+                <span className="absolute inset-0 w-full h-full transition-all duration-300 scale-0 group-hover:scale-100 bg-accent/10 rounded-lg" />
+                {loading ? (
+                  <svg className="animate-spin h-5 w-5 text-white mx-auto" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : formType === "login" ? "Sign In" : "Create Account"}
+              </button>
 
-              <p className="text-center mt-8 text-sm text-primary/70 transition-all duration-300">
+              <p className="text-center mt-8 text-sm text-primary/70">
                 {formType === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-                <button
-                  onClick={toggleFormType}
-                  className="text-primary hover:text-primary-dark font-medium transition-colors duration-300 relative group"
-                  >
+                <button onClick={toggleFormType} className="text-primary hover:text-primary-dark font-medium relative group">
                   {formType === "login" ? "Sign up" : "Sign in"}
-                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
                 </button>
               </p>
             </form>
-            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-
-      {/* Verification Modal */}
-      {/* {showVerifyModal && <VerifyModal onClose={closeModals} />} */}
-
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <SuccessModal
-          onClose={closeModals}
-          onGoToEmail={() => window.open("https://mail.google.com/mail/u/1/#spam", "_blank")}
-        />
-      )}
-
     </div>
-  )
+
+    {showSuccessModal && (
+      <SuccessModal
+        onClose={closeModals}
+        onGoToEmail={() => window.open("https://mail.google.com/mail/u/1/#spam", "_blank")}
+      />
+    )}
+  </div>
+);
+
 }

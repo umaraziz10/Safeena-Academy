@@ -20,4 +20,4 @@ router.use('/materials', materialsRoutes);
 router.use('/quiz', quizRoutes);
 router.use('/psychologists', psychologistRoutes);
 
-module.exports = router;
+module.exports = router;  
