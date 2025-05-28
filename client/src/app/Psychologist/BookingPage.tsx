@@ -63,6 +63,7 @@ export default function BookingPage() {
   const [ongoingService, setOngoingService] = useState('');
   const [ongoingPsy, setOngoingPsy] = useState('');
   const [ongoingDate, setOngoingDate] = useState('');
+  const [status, setStatus] = useState('');
   const [ongoingStart, setOngoingStart] = useState('');
   const [ongoingEnd, setOngoingEnd] = useState('');
   const [ongoingLoc, setOngoingLoc] = useState('');
@@ -78,8 +79,10 @@ export default function BookingPage() {
           setHasOngoing(false);
         } else {
           const ongoing = data.ongoing_consultations[0]; // Use index if it's an array
+          
           setOngoingPsyId(ongoing.psychologist_id);
           setOngoingService(ongoing.type_of_service);
+          setStatus(ongoing.status)
           setOngoingPsy(ongoing.psychologist_name);
           setOngoingDate(ongoing.consult_date);
           setOngoingStart(ongoing.start_time);
@@ -302,6 +305,21 @@ export default function BookingPage() {
                         <MapPinIcon className='w-4 h-4 text-[#337bbf]' />
                         <span>{ongoingLoc}</span>
                       </div>
+                      <div className='flex justify-center md:justify-start mt-6'>
+                        {status === 'Pending' ? (
+                          <div className='bg-[#93a6b8] text-white px-6 py-2 rounded-full font-semibold shadow-md hover:text-wrap'>
+                            Pending
+                          </div>
+                        ) : status === 'Approved' ? (
+                          <div className='bg-green-500 text-white px-6 py-2 rounded-full font-semibold shadow-md'>
+                            Disetujui
+                          </div>
+                        ) : (
+                          <button className='bg-gray-400 text-white px-6 py-2 rounded-full font-semibold shadow-md'>
+                            Status Tidak Diketahui
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -314,6 +332,7 @@ export default function BookingPage() {
                     className='object-cover'
                   />
                 </div>
+                
               </div>
               <div className='flex justify-center gap-2 mt-6'>
                 <div className='w-2 h-2 rounded-full bg-gray-300'></div>
@@ -332,7 +351,7 @@ export default function BookingPage() {
                   <a 
                   href='#counselor-listings'
                   className='text-[#337bbf] font-medium'>
-                    Mulailah dengan menjadwalkan sesi pertama Anda sekarang!
+                    Mulailah dengan menjadwalkan sesi Anda sekarang!
                   </a>
                 </div>
               </div>
@@ -460,7 +479,7 @@ export default function BookingPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Link href={`/Psychologist/${psychologist.id}`}>
+                    <Link href={`/Psychologist/${psychologist.id}`} className='font-semibold'>
                       Buat Janji
                     </Link>
                   </motion.button>

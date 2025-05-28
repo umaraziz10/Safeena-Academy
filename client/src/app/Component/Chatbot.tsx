@@ -1,9 +1,24 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import Navbar from '@/app/Component/navbar';
-import { Footer } from '@/app/Component/Footer';
-import { motion } from 'framer-motion';
-import { fadeIn } from '../variant';
+
+import Image from 'next/image';
+import {
+  Calendar,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Search,
+  X,
+  ChevronsLeft,
+  ChevronsRight,
+  Filter,
+} from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react'; // Pastikan useRef diimport
+import { motion, AnimatePresence } from 'framer-motion';
+import Navbar from '../Component/navbar';
+import { Footer } from '../Component/Footer';
+import { fadeIn } from '@/app/variant';
 
 type ChatMessage = {
   sender: "user" | "bot" | "loading";
@@ -15,7 +30,7 @@ const ChatbotPage = (): JSX.Element => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null); // bottomRef didefinisikan
 
   useEffect(() => {
     document.title = 'Supports';
@@ -86,12 +101,19 @@ const ChatbotPage = (): JSX.Element => {
   };
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (bottomRef.current && chatHistory.length > 0) {
+      const lastMessage = chatHistory[chatHistory.length - 1];
+      if (lastMessage.sender === "bot") {
+        // Menggunakan setTimeout untuk memastikan DOM selesai diperbarui
+        setTimeout(() => {
+          bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        }, 50); // Anda bisa sesuaikan delay ini
+      }
+    }
   }, [chatHistory]);
 
   return (
     <div className="relative min-h-screen w-full flex flex-col">
-      {/* Gradient Background */}
       <div
         className="absolute -left-[7px] top-0 -z-10 w-full h-full"
         style={{
@@ -105,11 +127,12 @@ const ChatbotPage = (): JSX.Element => {
       <main className="flex-grow">
         <div className="max-w-[1440px] mx-auto px-4 md:px-20 lg:px-20 py-20 md:py-20 lg:py-32">
           <section>
-            <motion.div 
+            <motion.div
             variants={fadeIn('down', 0.1)}
             initial='hidden'
             whileInView={'show'}
             viewport={{once: false, amount: 0.7}}
+            // Kontainer utama chatbox: flex-col dengan tinggi tetap
             className="max-w-[800px] mx-auto bg-white rounded-[15px] p-6 md:p-10 shadow-xl flex flex-col h-[80vh]">
               <motion.h1
               variants={fadeIn('down', 0.1)}
@@ -120,10 +143,9 @@ const ChatbotPage = (): JSX.Element => {
                 Berbincang dengan  Safeena!
               </motion.h1>
 
-              {/* Chat messages area */}
-              <div className="flex-1 overflow-y-auto space-y-4 mb-6 p-2">
+              <div className="flex-1 overflow-y-auto space-y-4 p-2">
                 {chatHistory.length === 0 ? (
-                  <motion.div 
+                  <motion.div
                   variants={fadeIn('up', 0.1)}
                   initial='hidden'
                   whileInView={'show'}
@@ -151,12 +173,11 @@ const ChatbotPage = (): JSX.Element => {
                     </div>
                   ))
                 )}
-                {/* This is the bottom anchor for auto-scroll */}
-                {/* <div ref={bottomRef} /> */}
+
+                <div ref={bottomRef} />
               </div>
 
-              {/* Input form */}
-              <form onSubmit={handleSubmit} className="flex items-center">
+              <form onSubmit={handleSubmit} className="flex items-center mt-4 mb-4">
                 <input
                   type="text"
                   value={text}
@@ -169,13 +190,12 @@ const ChatbotPage = (): JSX.Element => {
                   className="ml-4 bg-[#337bbf] hover:bg-[#285a8c] text-white p-3 rounded-lg transition disabled:opacity-50"
                   disabled={loading}
                 >
-                  {loading ? "Berpikir..." : "Tanya"}
+                  {loading ? "Berpikir..." : "Kirim"}
                 </button>
               </form>
 
-              {/* Error message */}
               {errorMessage && (
-                <div className="text-red-500 text-center mt-4">{errorMessage}</div>
+                <div className="text-red-500 text-center">{errorMessage}</div>
               )}
             </motion.div>
           </section>

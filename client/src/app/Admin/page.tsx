@@ -1,4 +1,3 @@
-// pages/index.tsx
 'use client'
 
 import React, { useEffect, useState } from 'react';
@@ -48,7 +47,10 @@ export default function Home() {
               'linear-gradient(202.3deg, #00558F -9.59%, #C0E6FF 100%)',
           }}>
           
-          <App />
+          <section id="dashboard" className='scroll-mt-[4rem]'>
+            <App />
+          </section>
+
           <section id="course" className='scroll-mt-[4rem]'>
             <Course />
           </section>

@@ -8,6 +8,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Hide scrollbar for IE, Edge and Firefox */
 * {
 -ms-overflow-x: hidden; /*IE and Edge */

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     }, {
-      tableName: 'quiz', // Nama tabel yang sesuai di database (singular)
+      tableName: 'Quiz', // Nama tabel yang sesuai di database (singular)
     });
   
     Quiz.associate = (models) => {

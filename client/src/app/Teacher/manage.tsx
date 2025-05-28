@@ -88,7 +88,7 @@ const cardsData: CardData[] = [
     id: 1,
     title: 'Kelola Siswa',
     description:
-      'Easily access and organize the full list of student accounts from one centralized page. Keep student information up-to-date and accurate, ensuring a seamless experience for both teachers and students across the platform.',
+      'Akses dan atur daftar lengkap akun siswa dengan mudah dari halaman terpusat. Jaga informasi siswa tetap terkini dan akurat, memastikan pengalaman yang lancar bagi guru dan siswa di seluruh platform.',
     imageUrl: '/manage.png', // <- path ke gambar lokal
     linkText: 'Kelola',
     linkUrl: '/Manage',
@@ -97,7 +97,7 @@ const cardsData: CardData[] = [
     id: 2,
     title: 'Jadwalkan Konsultasi',
     description:
-      'Easily schedule consultations for your students with school counselors. You can book, approve, reschedule, or cancel appointments to ensure a smooth, supportive, and efficient consultation process that meets each student’s needs.',
+      'Buat jadwal konsultasi dengan psikolog untuk siswa Anda dengan mudah. ​​Anda dapat memesan janji dengan psikolog Safeena jika membutuhkan bantuan lebih lanjut mengenai materi ataupun siswa anda',
     imageUrl:
       '/consult.png',
     linkText: 'Book',

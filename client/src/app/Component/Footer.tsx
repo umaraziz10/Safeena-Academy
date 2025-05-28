@@ -49,7 +49,7 @@ export const Footer = (): JSX.Element => {
 
           {/* Instagram */}
           <a
-            href="https://instagram.com/dylanamadeuss"
+            href="https://www.instagram.com/safeena.academy"
             target="_blank"
             rel="noopener noreferrer"
           >

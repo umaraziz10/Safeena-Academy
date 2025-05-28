@@ -57,7 +57,7 @@ function App() {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/quiz/submit`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/quiz/${id}/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,10 +68,7 @@ function App() {
       if (!response.ok) {
         throw new Error("Failed to submit");
       }
-
-      // const data = await response.json(); // You can keep if you want to do something with the response
-
-      // Navigate to /Educational/Exam/{id}
+      
       window.location.href = `/Educational/Exam/${id}`;
     } catch (error) {
       toast({

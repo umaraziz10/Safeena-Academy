@@ -6,17 +6,17 @@ export async function POST(request: Request) {
     const { text } = await request.json();
 
     const botResponsePromise = new Promise<string>((resolve, reject) => {
-      const command = `python app.py "${text.replace(/"/g, '\\"')}"`;
+      const command = `python3 app.py "${text.replace(/"/g, '\\"')}"`;
 
       exec(
         command,
         {
-          shell: 'cmd.exe',
+          // shell:"cmd.exe",
           timeout: 300000,
           maxBuffer: 1024 * 1024 * 10,
           env: {
-            ...process.env, // inherit parent env
-            PYTHONIOENCODING: "utf-8", // 🔥 Force stdout UTF-8
+            ...process.env, 
+            PYTHONIOENCODING: "utf-8",
           },
         },
         (error, stdout, stderr) => {

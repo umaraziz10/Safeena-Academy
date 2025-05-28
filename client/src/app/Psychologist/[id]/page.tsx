@@ -2,8 +2,8 @@
 'use client';
 
 import React from 'react';
-import Details from '@/app/Detailed/Details';
-import Bottom from '@/app/Detailed/Bottom';
+import Details from '@/app/Detail/Details';
+import Bottom from '@/app/Detail/Bottom';
 import Navbar from '../../Component/navbar';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';

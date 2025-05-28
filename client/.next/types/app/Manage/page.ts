@@ -1,4 +1,4 @@
-// File: C:\Users\dylan\OneDrive\Documents\UNPAD\Informatics Term VI\PPL 1\Safeena-Academy\client\src\app\Manage\page.tsx
+// File: /home/umaru/Documents/GitHub/Safeena-Academy/client/src/app/Manage/page.tsx
 import * as entry from '../../../../src/app/Manage/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

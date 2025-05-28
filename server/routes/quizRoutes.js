@@ -6,7 +6,7 @@ const quizController = require("../controllers/quizController");  // Pastikan pa
 router.get("/score", quizController.getScore);
 
 // Route untuk mengirim submission ujian
-router.post("/submit", quizController.submitExam);  // Pastikan submitExam ada di controller
+router.post("/:quizId/submit", quizController.submitExam);  // Pastikan submitExam ada di controller
 
 // Route untuk mendapatkan soal berdasarkan quizId
 router.get("/:quizId", quizController.getQuestions);

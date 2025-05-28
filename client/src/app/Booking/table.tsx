@@ -154,9 +154,9 @@ export const Tables = (): JSX.Element => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b bg-white/10 py-12">
+    <div className="min-h-screen bg-gradient-to-b bg-white/10 py-12 rounded-3xl">
       <section className="w-full max-w-[1440px] mx-auto px-6 lg:px-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#337bbf] font-['Outfit',Helvetica] mb-8 md:mb-6">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#337bbf] font-['Outfit',Helvetica] mb-8 md:mb-6">
           Kelola Pemesanan
         </h1>
 
@@ -178,7 +178,7 @@ export const Tables = (): JSX.Element => {
           </svg>
           <input
             type="text"
-            placeholder="Search bookings..."
+            placeholder="Cari Booking"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-transparent focus:outline-none text-[#337bbf] placeholder:text-[#a3c4e4] text-sm sm:text-base font-['Outfit',Helvetica]"
@@ -192,16 +192,16 @@ export const Tables = (): JSX.Element => {
               <TableRow className="border-b-2 border-[#b0d4f1] bg-[#d6eaff]">
                 {[
                   "Booking ID",
-                  "Name",
-                  "Psychologist",
-                  "Date",
-                  "Time",
+                  "Nama",
+                  "Psikolog",
+                  "Tanggal",
+                  "Jam",
                   "Status",
                   "Action",
                 ].map((head, i) => (
                   <TableHead
                     key={i}
-                    className={`py-5 text-left text-sm sm:text-base md:text-lg font-semibold text-[#225d99] font-['Outfit',Helvetica] ${
+                    className={`py-4 text-left text-sm sm:text-base md:text-lg font-semibold text-[#225d99] font-['Outfit',Helvetica] ${
                       head === "Action" ? "text-center w-40" : "w-auto"
                     }`}
                   >
@@ -220,7 +220,7 @@ export const Tables = (): JSX.Element => {
                       index % 2 === 0 ? "bg-white" : "bg-[#eef6fc]"
                     } hover:bg-[#d4ecff]`}
                   >
-                    <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
+                    <TableCell className="py-4 px-4 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
                       {booking.id}
                     </TableCell>
                     <TableCell className="py-4 px-2 text-[#337bbf] text-sm sm:text-base font-['Outfit',Helvetica]">
@@ -242,7 +242,7 @@ export const Tables = (): JSX.Element => {
                     >
                       {booking.status}
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center">
+                    <TableCell className="py-4 px-4 text-center">
                       <ActionButtons bookingId={booking.id} />
                     </TableCell>
                   </TableRow>

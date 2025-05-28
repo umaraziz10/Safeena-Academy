@@ -70,7 +70,7 @@ const CoursePage = (): JSX.Element => {
         initial='hidden'
         whileInView={'show'}
         viewport={{once: false, amount: 0.7}}
-        className="text-3xl md:text-4xl lg:text-5xl font-medium text-[#ffee5a] [font-family:'Outfit',Helvetica] mb-6 md:mb-10">
+        className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#ffee5a] [font-family:'Outfit',Helvetica] mb-4 md:mb-6">
           List Materi
         </motion.h1>
 
@@ -82,8 +82,8 @@ const CoursePage = (): JSX.Element => {
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-10">
           <div className="w-full sm:w-[436px]">
             <Input
-              className="h-[50px] md:h-[70px] bg-[#ffffffa6] rounded-[20px] px-4 md:px-6 text-lg md:text-xl [font-family:'Outfit',Helvetica] font-normal text-[#0000004f]"
-              placeholder="Search Material"
+              className="h-[30px] md:h-[50px] bg-[#ffffffa6] rounded-[20px] px-4 md:px-6 text-lg md:text-xl [font-family:'Outfit',Helvetica] font-normal text-[#0000004f]"
+              placeholder="Cari Materi"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -128,15 +128,16 @@ const CoursePage = (): JSX.Element => {
 
         {filteredMaterials.length > 6 && (
           <div className="flex flex-col items-center">
-            <h2 className="text-2xl md:text-[32px] font-medium [font-family:'Outfit',Helvetica] text-[#337bbf] text-center mb-4">
-              Materi Lainnya
-            </h2>
+            <div className="text-xl [font-family:'Outfit',Helvetica] text-[#337bbf] text-center">
+              {/* Materi Lainnya */}
+              {showMore ? 'Tutup' : 'Materi Lainnya'}
+            </div>
             <button 
               onClick={() => setShowMore(!showMore)} 
               className="cursor-pointer transition-transform hover:scale-110"
             >
               <img
-                className={`w-[50px] h-[50px] md:w-[70px] md:h-[70px] mb-40 object-cover transform transition-transform duration-300 ${showMore ? 'rotate-180' : ''}`}
+                className={`w-[25px] h-[25px] md:w-[40px] md:h-[40px] mb-20 object-cover transform transition-transform duration-300 ${showMore ? 'rotate-180' : ''}`}
                 alt="More materials icon"
                 src="/arrowbottom.png"
               />

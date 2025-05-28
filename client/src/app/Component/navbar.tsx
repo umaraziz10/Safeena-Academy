@@ -8,7 +8,18 @@ import { Menu, X, ChevronDown, User } from "lucide-react";
 import { fetchWithToken } from "@/lib/fetchWithToken";
 import { cn } from "@/lib/utils";
 
-function getNavLinks(Role: string) {
+interface NavSubMenuItem {
+  name: string;
+  href: string;
+}
+
+interface NavLinkItem {
+  name: string;
+  href: string | null;
+  submenu?: NavSubMenuItem[];
+}
+
+function getNavLinks(Role: string): NavLinkItem[] {
   return [
     { 
       name: "Beranda",
@@ -16,10 +27,11 @@ function getNavLinks(Role: string) {
     },
     {
       name: "Kursus",
-      href: Role === 'admin' || Role === 'teacher' ? "/Admin#course" : "/Educational"
+      href: Role === 'admin' ? "/Admin#course" : "/Educational"
     },
     { name: "Konsultasi", href: "/Psychologist" },
-    { name: "Layanan Chat", href: "/Chatbot" },
+    { name: "Medali", href: Role === 'student' || 'teacher' ? "/Educational/Badges" : null },
+    { name: "Chatbot", href: "/Chatbot" },
   ];
 }
 
@@ -172,12 +184,14 @@ export default function Navbar() {
                     )}
                   </div>
                 ) : (
-                  <Link
+                  link.href !== null && (
+                    <Link
                     href={link.href}
                     className="block px-3 py-2 text-forest-800 font-medium transition-colors duration-300 hover:text-[#337bbf] rounded-md"
                   >
                     {link.name}
                   </Link>
+                  )
                 )}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#337bbf] transition-all duration-300 group-hover:w-full"></span>
               </li>
@@ -200,7 +214,7 @@ export default function Navbar() {
                   alt="User"
                   className="w-8 h-8 rounded-full object-cover"
                 />
-                <span className="text-gray-800">{name}</span>
+                <span className="text-gray-800 font-bold">{name}</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}
                   fill="none"
@@ -237,13 +251,8 @@ export default function Navbar() {
           ) : (
             <>
               <Link href={"/Login"}>
-                <button className="px-4 py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium transition-all duration-300 hover:bg-forest-50 hover:border-forest-600">
+                <button className="px-6 py-1 rounded-full border-2 text-forest-600 font-medium transition-all duration-300 border-[#337bbfc2] hover:bg-blue-500 hover:text-white">
                   Login
-                </button>
-              </Link>
-              <Link href={"/Chatbot"}>
-                <button className="px-4 py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium transition-all duration-300 hover:bg-forest-50 hover:border-forest-600">
-                  Get Help
                 </button>
               </Link>
             </>
@@ -307,13 +316,15 @@ export default function Navbar() {
                     )}
                   </div>
                 ) : (
-                  <Link
-                    href={link.href}
-                    className="block px-3 py-2 text-base font-medium text-forest-800 hover:text-[#337bbf] rounded-md transition-colors duration-300"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
+                  link.href !== null && (
+                      <Link
+                      href={link.href}
+                      className="block px-3 py-2 text-base font-medium text-forest-800 hover:text-[#337bbf] rounded-md transition-colors duration-300"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.name}
+                    </Link>
+                  )
                 )}
               </li>
             ))}
@@ -352,12 +363,6 @@ export default function Navbar() {
                   className="w-full text-center py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium hover:bg-forest-50 hover:border-forest-600 transition-all"
                 >
                   Login
-                </Link>
-                <Link
-                  href="/Chatbot"
-                  className="w-full text-center py-2 rounded-full border-2 border-forest-500 text-forest-600 font-medium hover:bg-forest-50 hover:border-forest-600 transition-all"
-                >
-                  Get Help
                 </Link>
               </li>
             )}

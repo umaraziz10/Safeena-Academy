@@ -153,7 +153,7 @@ export default function LoginPage() {
           initial='hidden'
           whileInView={'show'}
           viewport={{once: false, amount: 0.65}}
-          className={`relative w-full max-w-md md:max-w-lg lg:max-w-2xl transition-all duration-700 transform ${mounted ? "translate-y-0" : "translate-y-8"}`}>
+          className="relative w-full max-w-md md:max-w-lg lg:max-w-2xl">
             <div className="rounded-3xl overflow-hidden shadow-xl transition-all duration-500" style={{ aspectRatio: "1.21" }}>
               <img src="/IconLogin.png" alt="Mental Health Support" className="w-full h-full object-cover object-center" />
             </div>
@@ -176,7 +176,7 @@ export default function LoginPage() {
           stiffness: 250, 
           damping: 20 
         }}
-        className={`w-full md:w-1/2 lg:w-2/5 max-w-md transition-all duration-700 transform ${mounted ? "translate-y-0" : "translate-y-8"}`}>
+        className="w-full md:w-1/2 lg:w-2/5 max-w-md">
           <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-6 md:p-8 border border-grayblue/30 shadow-lg">
             <div className="text-center mb-6">
               <h1 className="text-2xl md:text-3xl font-semibold text-primary-dark">{formType === "login" ? "Welcome Back" : "Create Account"}</h1>

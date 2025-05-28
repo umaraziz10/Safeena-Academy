@@ -167,10 +167,19 @@ export const Landing = (): JSX.Element => {
               initial="hidden"
               whileInView="show"
               viewport={{ once: false, amount: 1 }}
-              className="font-medium text-4xl md:text-4xl lg:text-5xl text-[#ffee5a] mb-[40px] md:mb-[30px] animate-fade-in"
+              className="font-bold text-4xl md:text-4xl lg:text-5xl text-[#ffee5a] mb-[40px] md:mb-[20px] animate-fade-in"
             >
               List Kursus
             </motion.h2>
+            <motion.p
+              variants={fadeIn("up", 0.1)}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, amount: 1 }}
+              className="font-medium max-w-3xl text-[#ffffff] mb-[40px] md:mb-[30px] animate-fade-in"
+            >
+              Yuk kenali dirimu. Belajar seputar Mental Health kapan saja dan di mana saja. Kami akan mendukung perjalananmu menuju kesehatan mental yang lebih baik.
+            </motion.p>
 
             {/* List Courses */}
             <motion.div

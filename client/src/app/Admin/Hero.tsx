@@ -59,8 +59,8 @@ export const Hero = (): JSX.Element => {
                 viewport={{ once: false, amount: 0.7 }}
                 className="mt-6 md:mt-8 lg:mt-10 h-[45px] sm:h-[50px] md:h-[58px] w-full sm:max-w-[400px] md:max-w-[525px] rounded-[30px] bg-[#337bbf] hover:bg-[#2a69a6] text-base sm:text-lg md:text-xl font-medium flex items-center justify-center"
               >
-                <Link href="#course">
-                  <span className="text-white">Lihat Pelajaran</span>
+                <Link href="#dashboard">
+                  <span className="text-white">Lihat Dashboard</span>
                 </Link>
               </motion.div>
             </div>

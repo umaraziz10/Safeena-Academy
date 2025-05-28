@@ -1,4 +1,4 @@
-require('dotenv').config(); // pastikan ini paling atas
+require('dotenv').config();
 
 const express = require('express');
 const app = express();
@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 // Root route
 app.get('/', (req, res) => {
-  res.json({ 'message' : 'HALLO FROM EXPRESS!!!'});
+  res.json({ 'message' : 'Hi ini API Safeena!'});
 });
 
 // Routes
@@ -38,15 +38,15 @@ app.use((err, req, res, next) => {
 // Test connection to database
 sequelize.authenticate()
   .then(() => {
-    console.log('Database connected ✅');
+    console.log('Database Successfully Connected ');
   })
   .catch(err => {
-    console.error('Database connection error ❌:', err);
+    console.error('Database Connection Error:', err);
   });
 
 // Server listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 

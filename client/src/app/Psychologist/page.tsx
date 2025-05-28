@@ -30,12 +30,10 @@ export default function Home() {
     }
   }, [role, router]);
 
-  // Render nothing until role is known
   if (!role || role === 'No Role') return null;
 
   return (
     <div className="flex flex-col min-h-screen">
-          {/* <Navbar /> */}
           <Navbar />
       <main className="">
         <BookingPage />

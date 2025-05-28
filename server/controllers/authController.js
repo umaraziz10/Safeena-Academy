@@ -97,7 +97,7 @@ exports.register = async (req, res) => {
               <p>Hello,</p>
               <p>Thank you for registering at Safeena Academy!</p>
               <p>Please click the button below to verify your email address and complete your registration:</p>
-              <a href="http://localhost:5000/auth/verify?token=${token}" class="btn" style="color: #ffffff">Verify Your Email</a>
+              <a href='http://${process.env.BACK_END_URL}/auth/verify?token=${token}' class="btn" style="color: #ffffff">Verify Your Email</a>
             </div>
             <div class="footer">
               <p>If you did not register for Safeena Academy, please ignore this email.</p>
@@ -141,7 +141,6 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-
     res.json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -159,12 +158,10 @@ exports.verifyEmail = async (req, res) => {
       const user = await User.findByPk(decoded.id);
       if (!user) return res.status(404).json({ message: 'User not found' });
   
-      // Update status isVerified
       user.isVerified = true;
       await user.save();
-  
-      // res.status(200).json({ message: 'Email verified successfully. You can now login.' });
-      return res.redirect('http://localhost:3000/Login');
+
+      return res.redirect(`http://${process.env.FRONT_END_URL}/Login`);
     } catch (error) {
       console.error(error);
       res.status(400).json({ message: 'Invalid or expired token' });
@@ -173,7 +170,6 @@ exports.verifyEmail = async (req, res) => {
 
   exports.logout = async (req, res) => {
     try {
-      // Karena JWT sifatnya stateless, kita hanya kasih response sukses
       res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
       res.status(500).json({ message: 'Server error', error });
@@ -201,7 +197,7 @@ exports.verifyEmail = async (req, res) => {
   
   Please click the link below to reset your password:
   
-  http://localhost:3000/auth/reset-password?token=${token}
+  http://${process.env.BACK_END_URL}/auth/reset-password?token=${token}
   
   If you did not request a password reset, please ignore this email.
   
@@ -268,7 +264,7 @@ exports.verifyEmail = async (req, res) => {
   
   Please click the link below to verify your email:
   
-  http://localhost:3000/auth/verify?token=${token}
+  http://${process.env.BACK_END_URL}/auth/verify?token=${token}
   
   If you did not register, please ignore this email.
   

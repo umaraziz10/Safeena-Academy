@@ -8,13 +8,13 @@ exports.getQuestions = async (req, res) => {
     // Ambil soal berdasarkan quizId
     const questions = await db.Question.findAll({
       where: { quizId },
-      attributes: ['id', 'text', 'options', 'correctIndex', 'quizId', 'createdAt', 'updatedAt']  // Perbarui field
+      attributes: ['id', 'text', 'options', 'quizId']  
     });
 
     // Ambil durasi dari quiz
     const quiz = await db.Quiz.findOne({
       where: { id: quizId },
-      attributes: ['duration'],  // Hanya mengambil durasi quiz
+      attributes: ['duration'], 
     });
 
     // Pastikan soal ada untuk quizId yang diberikan
@@ -42,7 +42,10 @@ exports.getQuestions = async (req, res) => {
 
 //Menyimpan Submission
 exports.submitExam = async (req, res) => {
-  const { userId, answers, quizId } = req.body;
+  const { quizId } = req.params;
+  // const { userId, answers, quizId } = req.body;
+  const { userId, answers } = req.body;
+
 
   // Validasi input
   if (!userId || !answers || !quizId) {

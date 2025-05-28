@@ -53,8 +53,8 @@ const Index = (): JSX.Element => {
 
    const dashboardCards = [
     {
-      title: 'Students',
-      subtitle: `${studentCount} Accounts`,
+      title: 'Siswa',
+      subtitle: `${studentCount} Akun`,
       count: `${studentCount}`,
       imageUrl: '/student.png',
       bgColor: 'from-rose-400 to-rose-600',
@@ -62,8 +62,8 @@ const Index = (): JSX.Element => {
     },
 
     {
-      title: 'Courses',
-      subtitle: `${materialCount} Courses`,
+      title: 'Modul',
+      subtitle: `${materialCount} Materi`,
       count: `${materialCount}`,
       imageUrl: '/courses.png',
       bgColor: 'from-purple-400 to-purple-600',

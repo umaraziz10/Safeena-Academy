@@ -7,14 +7,14 @@ const validate = require('../middlewares/validateConsultation');
 router.post(
   '/',
   authMiddleware,
-  ...validate.validateCreateConsultation, // ✅ spread array function
+  ...validate.validateCreateConsultation,
   consultationController.createConsultation
 );
 
 router.patch(
   '/:id/status',
   authMiddleware,
-  ...validate.validateUpdateStatus, // ✅ spread juga
+  ...validate.validateUpdateStatus,
   consultationController.updateConsultationStatus
 );
 

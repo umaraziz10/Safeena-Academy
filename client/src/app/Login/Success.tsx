@@ -48,14 +48,14 @@ export const SuccessModal = ({ onClose, onGoToEmail }: SuccessModalProps): JSX.E
 
             {/* Right side with text and button */}
             <div className="flex flex-col px-4 xs:px-5 sm:px-6 md:px-0 md:ml-[49px] mt-2 xs:mt-3 sm:mt-4 md:mt-[81px] items-center md:items-start">
-              <div className="w-full md:w-[416px] text-center md:text-left font-['Outfit',Helvetica] font-semibold text-[#337bbf] text-xl xs:text-2xl md:text-[32px] leading-tight xs:leading-normal mb-4 xs:mb-5 sm:mb-6 md:mb-0">
-                Hey, Safeena just sent you an email for verification. Please check your email to verify!
+              <div className="w-full md:w-[416px] text-center md:text-left font-['Outfit',Helvetica] font-medium text-[#337bbf] text-lg xs:text-xl md:text-[32px] leading-tight xs:leading-normal mb-4 xs:mb-5 sm:mb-6 md:mb-0">
+                Hai, Safeena baru saja mengirimkan verifikasi melalui email mu. Silahkan check email untuk verifikasi ya!
               </div>
               <Button
                 className="w-full max-w-[300px] md:w-[258px] h-10 xs:h-11 sm:h-12 md:h-16 mb-6 xs:mb-8 sm:mb-10 md:mt-[108px] rounded-[15px] xs:rounded-[18px] sm:rounded-[20px] [background:linear-gradient(132deg,rgba(51,123,191,1)_0%,rgba(177,217,255,1)_100%)] font-['Outfit',Helvetica] font-medium text-white text-lg xs:text-xl md:text-2xl"
                 onClick={onGoToEmail || onClose}
               >
-                Go to E-mail : )
+                Pergi Ke E-mail
               </Button>
             </div>
           </CardContent>

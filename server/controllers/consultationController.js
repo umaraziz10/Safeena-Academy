@@ -168,7 +168,7 @@ exports.updateConsultationStatus = async (req, res) => {
     await consultation.save();
 
     res.status(200).json({
-      message: 'Consultation status updated',
+      message: 'Status konsultasi telah diperbaharui',
       consultation: {
         ...consultation.toJSON(),
         consult_date: toWIB(consultation.consult_date)
@@ -188,48 +188,6 @@ exports.deleteConsultation = async (req, res) => {
 
     await consultation.destroy();
     res.status(200).json({ message: 'Consultation deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error', error });
-  }
-};
-
- exports.getOngoingConsultationsForUser = async (req, res) => {
-  try {
-    const user_id = req.user.id;
-
-    const consultations = await Consultation.findAll({
-      where: { user_id, status: ['Pending', 'Approved']}, // Hanya konsultasi yang 'Pending'
-      include: [
-        {
-          model: Psychologist,
-          as: 'psychologist', // Relasi ke model Psychologist
-          attributes: ['name', 'location', 'location_url', 'image_path'], // Menambahkan image_path
-        },
-        {
-          model: TimeSlot,
-          as: 'slot',
-          attributes: ['start_time', 'end_time'], // Menambahkan start_time dan end_time
-        },
-      ],
-    });
-
-    if (!consultations) {
-      return res.status(404).json({ message: 'No ongoing consultations found' });
-    }
-
-    // Convert consult_date to WIB and format response
-    const ongoingConsultations = consultations.map(consult => ({
-      type_of_service: consult.type_of_service,
-      consult_date: consult.consult_date,
-      start_time: consult.slot.start_time,
-      end_time: consult.slot.end_time,
-      location: consult.psychologist.location,
-      location_url: consult.psychologist.location_url,
-      image_path: consult.psychologist.image_path,
-    }));
-
-    res.status(200).json({ ongoing_consultations: ongoingConsultations });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error', error });
@@ -257,12 +215,13 @@ exports.getOngoingConsultationsForUser = async (req, res) => {
     });
 
     if (!consultations || consultations.length === 0) {
-      return res.status(404).json({ message: 'No ongoing consultations found' });
+      return res.status(404).json({ message: 'Tidak ada konsultasi yang sedang berlangsung' });
     }
 
     const ongoingConsultations = consultations.map(consult => ({
       type_of_service: consult.type_of_service,
       consult_date: consult.consult_date,
+      status: consult.status,
       start_time: consult.slot.start_time,
       end_time: consult.slot.end_time,
       psychologist_id: consult.psychologist.id,                

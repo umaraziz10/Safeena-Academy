@@ -1,6 +1,6 @@
-/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[3].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[13].oneOf[3].use[2]!./node_modules/next/font/local/target.css?{"path":"src\\app\\layout.tsx","import":"","arguments":[{"src":"./fonts/GeistVF.woff","variable":"--font-geist-sans","weight":"100 900"}],"variableName":"geistSans"} ***!
-  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[3].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[13].oneOf[3].use[2]!./node_modules/next/font/local/target.css?{"path":"src/app/layout.tsx","import":"","arguments":[{"src":"./fonts/GeistVF.woff","variable":"--font-geist-sans","weight":"100 900"}],"variableName":"geistSans"} ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 @font-face {
 font-family: 'geistSans';
 src: url(/_next/static/media/4473ecc91f70f139-s.p.woff) format('woff');
@@ -11,9 +11,9 @@ font-weight: 100 900;
 }.__variable_1e4310 {--font-geist-sans: 'geistSans', 'geistSans Fallback'
 }
 
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[3].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[13].oneOf[3].use[2]!./node_modules/next/font/local/target.css?{"path":"src\\app\\layout.tsx","import":"","arguments":[{"src":"./fonts/GeistMonoVF.woff","variable":"--font-geist-mono","weight":"100 900"}],"variableName":"geistMono"} ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[3].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[13].oneOf[3].use[2]!./node_modules/next/font/local/target.css?{"path":"src/app/layout.tsx","import":"","arguments":[{"src":"./fonts/GeistMonoVF.woff","variable":"--font-geist-mono","weight":"100 900"}],"variableName":"geistMono"} ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 @font-face {
 font-family: 'geistMono';
 src: url(/_next/static/media/463dafcda517f24f-s.p.woff) format('woff');
@@ -751,14 +751,14 @@ video {
 .mb-2 {
   margin-bottom: 0.5rem;
 }
+.mb-20 {
+  margin-bottom: 5rem;
+}
 .mb-3 {
   margin-bottom: 0.75rem;
 }
 .mb-4 {
   margin-bottom: 1rem;
-}
-.mb-40 {
-  margin-bottom: 10rem;
 }
 .mb-5 {
   margin-bottom: 1.25rem;
@@ -1156,9 +1156,6 @@ video {
 .w-\[50\%\] {
   width: 50%;
 }
-.w-\[50px\] {
-  width: 50px;
-}
 .w-\[60\%\] {
   width: 60%;
 }
@@ -1197,6 +1194,9 @@ video {
 }
 .max-w-2xl {
   max-width: 42rem;
+}
+.max-w-3xl {
+  max-width: 48rem;
 }
 .max-w-4xl {
   max-width: 56rem;
@@ -1749,6 +1749,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(51 123 191 / var(--tw-bg-opacity, 1));
 }
+.bg-\[\#93a6b8\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(147 166 184 / var(--tw-bg-opacity, 1));
+}
 .bg-\[\#ababab\] {
   --tw-bg-opacity: 1;
   background-color: rgb(171 171 171 / var(--tw-bg-opacity, 1));
@@ -1859,6 +1863,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
 }
+.bg-gray-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
+}
 .bg-grayblue {
   --tw-bg-opacity: 1;
   background-color: rgb(221 229 233 / var(--tw-bg-opacity, 1));
@@ -1866,6 +1874,10 @@ video {
 .bg-green-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1));
+}
+.bg-green-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
 }
 .bg-mint {
   --tw-bg-opacity: 1;
@@ -1938,6 +1950,9 @@ video {
 }
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
+}
+.bg-\[linear-gradient\(to_right\2c \#337bbf\2c \#65b4ff\)\] {
+  background-image: linear-gradient(to right,#337bbf,#65b4ff);
 }
 .bg-\[url\(\/whatsapp-image-2025-03-26-at-15-16-39-e5597558-1\.png\)\] {
   background-image: url(/whatsapp-image-2025-03-26-at-15-16-39-e5597558-1.png);
@@ -2070,11 +2085,17 @@ video {
 .to-transparent {
   --tw-gradient-to: transparent var(--tw-gradient-to-position);
 }
+.bg-\[length\:150\%_100\%\] {
+  background-size: 150% 100%;
+}
 .bg-cover {
   background-size: cover;
 }
 .bg-clip-text {
   background-clip: text;
+}
+.bg-\[position\:0\%_0\%\] {
+  background-position: 0% 0%;
 }
 .bg-center {
   background-position: center;
@@ -2467,6 +2488,10 @@ video {
 .text-\[\#ffffff99\] {
   color: #ffffff99;
 }
+.text-\[\#ffffff\] {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
 .text-amber-500 {
   --tw-text-opacity: 1;
   color: rgb(245 158 11 / var(--tw-text-opacity, 1));
@@ -2701,6 +2726,10 @@ video {
   --tw-drop-shadow: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
+.drop-shadow-sm {
+  --tw-drop-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
 .drop-shadow-xl {
   --tw-drop-shadow: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
@@ -2725,6 +2754,11 @@ video {
 }
 .transition {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-\[background-position\] {
+  transition-property: background-position;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -2771,6 +2805,9 @@ video {
 .duration-700 {
   transition-duration: 700ms;
 }
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
@@ -2806,6 +2843,9 @@ video {
 .duration-700 {
   animation-duration: 700ms;
 }
+.ease-in-out {
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
 .ease-out {
   animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
@@ -2820,6 +2860,10 @@ video {
 }
 .\[writing-mode\:vertical-lr\] {
   writing-mode: vertical-lr;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
@@ -2940,6 +2984,12 @@ scrollbar-width: none; /* Firefox */
 
 
 
+.hover\:text-wrap:hover {
+  text-wrap: wrap;
+}
+
+
+
 .hover\:border-\[\#337bbf\]:hover {
   --tw-border-opacity: 1;
   border-color: rgb(51 123 191 / var(--tw-border-opacity, 1));
@@ -3054,6 +3104,13 @@ scrollbar-width: none; /* Firefox */
 
 
 
+.hover\:bg-blue-500:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
+}
+
+
+
 .hover\:bg-destructive\/90:hover {
   background-color: hsl(var(--destructive) / 0.9);
 }
@@ -3135,6 +3192,12 @@ scrollbar-width: none; /* Firefox */
 .hover\:bg-yellow-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(230 214 80 / var(--tw-bg-opacity, 1));
+}
+
+
+
+.hover\:bg-\[position\:100\%_0\%\]:hover {
+  background-position: 100% 0%;
 }
 
 
@@ -4353,6 +4416,10 @@ scrollbar-width: none; /* Firefox */
     margin-bottom: 100px;
   }
 
+  .md\:mb-\[20px\] {
+    margin-bottom: 20px;
+  }
+
   .md\:mb-\[30px\] {
     margin-bottom: 30px;
   }
@@ -4473,6 +4540,10 @@ scrollbar-width: none; /* Firefox */
     height: 397px;
   }
 
+  .md\:h-\[40px\] {
+    height: 40px;
+  }
+
   .md\:h-\[49px\] {
     height: 49px;
   }
@@ -4481,12 +4552,12 @@ scrollbar-width: none; /* Firefox */
     height: 500px;
   }
 
-  .md\:h-\[58px\] {
-    height: 58px;
+  .md\:h-\[50px\] {
+    height: 50px;
   }
 
-  .md\:h-\[70px\] {
-    height: 70px;
+  .md\:h-\[58px\] {
+    height: 58px;
   }
 
   .md\:h-full {
@@ -4577,6 +4648,10 @@ scrollbar-width: none; /* Firefox */
     width: 397px;
   }
 
+  .md\:w-\[40px\] {
+    width: 40px;
+  }
+
   .md\:w-\[416px\] {
     width: 416px;
   }
@@ -4591,10 +4666,6 @@ scrollbar-width: none; /* Firefox */
 
   .md\:w-\[705px\] {
     width: 705px;
-  }
-
-  .md\:w-\[70px\] {
-    width: 70px;
   }
 
   .md\:w-\[var\(--radix-navigation-menu-viewport-width\)\] {
