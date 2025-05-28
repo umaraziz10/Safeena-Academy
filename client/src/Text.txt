@@ -1,0 +1,243 @@
+"use client"
+
+import { useEffect, useRef } from "react"
+
+interface Leaf {
+  x: number
+  y: number
+  size: number
+  speed: number
+  rotation: number
+  rotationSpeed: number
+  color: string
+  opacity: number
+  shape: number
+  glowSize: number
+  glowOpacity: number
+}
+
+export default function FallingLeaves() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    // Set canvas to full window size
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+
+    window.addEventListener("resize", resizeCanvas)
+    resizeCanvas()
+
+    // Helper function to properly create colors with different opacity
+    const getColorWithOpacity = (color: string, opacity: number): string => {
+      if (color.startsWith("rgba")) {
+        // Extract the RGB part from the rgba string
+        const rgbMatch = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/)
+        if (rgbMatch) {
+          const [_, r, g, b] = rgbMatch
+          return `rgba(${r}, ${g}, ${b}, ${opacity})`
+        }
+      } else if (color.startsWith("rgb")) {
+        // Extract the RGB part from the rgb string
+        const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/)
+        if (rgbMatch) {
+          const [_, r, g, b] = rgbMatch
+          return `rgba(${r}, ${g}, ${b}, ${opacity})`
+        }
+      }
+      // Default fallback
+      return `rgba(34, 139, 34, ${opacity})`
+    }
+
+    // Premium colors with transparency for a luxury feel
+    const colors = [
+      "rgba(34, 139, 34, 0.6)", // forest-500
+      "rgba(156, 175, 136, 0.6)", // sage-300
+      "rgba(80, 200, 120, 0.6)", // emerald-400
+      "rgba(152, 255, 152, 0.6)", // mint-300
+      "rgba(128, 128, 0, 0.6)", // olive-500
+    ]
+
+    // Create leaves
+    const leaves: Leaf[] = []
+    const leafCount = Math.min(Math.floor(window.innerWidth / 25), 30) // Fewer, more premium leaves
+
+    for (let i = 0; i < leafCount; i++) {
+      leaves.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * -1 - 100, // Start above the canvas
+        size: Math.random() * 20 + 15, // Larger leaves for premium feel
+        speed: Math.random() * 0.8 + 0.3, // Slower, more elegant movement
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.005, // Slower rotation
+        color: colors[Math.floor(Math.random() * colors.length)],
+        opacity: Math.random() * 0.4 + 0.2, // More subtle opacity
+        shape: Math.floor(Math.random() * 3), // 0: maple, 1: oval, 2: round
+        glowSize: Math.random() * 10 + 5, // Glow effect size
+        glowOpacity: Math.random() * 0.15 + 0.05, // Subtle glow
+      })
+    }
+
+    // Draw a premium leaf with glow effect
+    const drawLeaf = (leaf: Leaf) => {
+      if (!ctx) return
+
+      ctx.save()
+      ctx.translate(leaf.x, leaf.y)
+      ctx.rotate(leaf.rotation)
+
+      // Draw glow effect
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, leaf.size + leaf.glowSize)
+
+      // Properly parse the rgba color to create new colors with different opacity
+      let baseColor
+      if (leaf.color.startsWith("rgba")) {
+        // Extract the RGB part from the rgba string
+        const rgbMatch = leaf.color.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/)
+        if (rgbMatch) {
+          const [_, r, g, b] = rgbMatch
+          baseColor = `rgba(${r}, ${g}, ${b}`
+        } else {
+          baseColor = "rgba(34, 139, 34" // Default if parsing fails
+        }
+      } else {
+        baseColor = leaf.color
+      }
+
+      gradient.addColorStop(0, `${baseColor}, ${leaf.glowOpacity})`)
+      gradient.addColorStop(1, `${baseColor}, 0)`)
+
+      // Draw the leaf
+      ctx.globalAlpha = leaf.opacity
+      ctx.fillStyle = leaf.color
+
+      // Different leaf shapes with more detailed, premium look
+      if (leaf.shape === 0) {
+        // Maple leaf shape (more detailed)
+        ctx.beginPath()
+        const size = leaf.size
+
+        // Main leaf shape
+        ctx.moveTo(0, -size / 2)
+        ctx.bezierCurveTo(size / 3, -size / 2, size / 2, -size / 3, size / 2, 0)
+        ctx.bezierCurveTo(size / 2, size / 3, size / 3, size / 2, 0, size / 2)
+        ctx.bezierCurveTo(-size / 3, size / 2, -size / 2, size / 3, -size / 2, 0)
+        ctx.bezierCurveTo(-size / 2, -size / 3, -size / 3, -size / 2, 0, -size / 2)
+
+        // Add veins for detail
+        ctx.moveTo(0, -size / 2)
+        ctx.lineTo(0, size / 2)
+        ctx.moveTo(-size / 3, -size / 4)
+        ctx.lineTo(size / 3, -size / 4)
+        ctx.moveTo(-size / 3, 0)
+        ctx.lineTo(size / 3, 0)
+        ctx.moveTo(-size / 3, size / 4)
+        ctx.lineTo(size / 3, size / 4)
+
+        ctx.fill()
+        ctx.strokeStyle = getColorWithOpacity(leaf.color, 0.8)
+        ctx.lineWidth = size / 30
+        ctx.stroke()
+
+        // Stem
+        ctx.beginPath()
+        ctx.moveTo(0, size / 2)
+        ctx.lineTo(0, size)
+        ctx.lineWidth = size / 15
+        ctx.strokeStyle = leaf.color
+        ctx.stroke()
+      } else if (leaf.shape === 1) {
+        // Elegant oval leaf
+        ctx.beginPath()
+        ctx.ellipse(0, 0, leaf.size / 2, leaf.size, 0, 0, Math.PI * 2)
+        ctx.fill()
+
+        // Detailed veins
+        ctx.beginPath()
+        ctx.moveTo(0, -leaf.size)
+        ctx.lineTo(0, leaf.size)
+        ctx.lineWidth = leaf.size / 20
+        ctx.strokeStyle = getColorWithOpacity(leaf.color, 0.6)
+        ctx.stroke()
+
+        // Secondary veins
+        const veins = 5
+        for (let i = 1; i <= veins; i++) {
+          const y = -leaf.size + ((2 * leaf.size) / (veins + 1)) * i
+          const width = (Math.sqrt(1 - Math.pow(y / leaf.size, 2)) * leaf.size) / 2
+
+          ctx.beginPath()
+          ctx.moveTo(-width / 2, y)
+          ctx.lineTo(width / 2, y)
+          ctx.lineWidth = leaf.size / 40
+          ctx.strokeStyle = getColorWithOpacity(leaf.color, 0.4)
+          ctx.stroke()
+        }
+      } else {
+        // Premium round leaf
+        ctx.beginPath()
+        ctx.arc(0, 0, leaf.size / 2, 0, Math.PI * 2)
+        ctx.fill()
+
+        // Add a subtle border for premium look
+        ctx.strokeStyle = getColorWithOpacity(leaf.color, 0.8)
+        ctx.lineWidth = leaf.size / 30
+        ctx.stroke()
+
+        // Add a highlight
+        ctx.beginPath()
+        ctx.arc(-leaf.size / 6, -leaf.size / 6, leaf.size / 10, 0, Math.PI * 2)
+        ctx.fillStyle = "rgba(255, 255, 255, 0.3)"
+        ctx.fill()
+      }
+
+      ctx.restore()
+    }
+
+    // Animation loop with smoother, more elegant movement
+    const animate = () => {
+      if (!ctx || !canvas) return
+
+      // Clear with a slight fade effect for smoother transitions
+      ctx.fillStyle = "rgba(0, 0, 0, 0.01)"
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Update and draw each leaf
+      leaves.forEach((leaf) => {
+        // Update position with more natural, flowing movement
+        leaf.y += leaf.speed
+        leaf.x += Math.sin(leaf.y * 0.005) * 0.8 // Gentler side-to-side movement
+        leaf.rotation += leaf.rotationSpeed
+
+        // Subtle pulsing effect for the glow
+        leaf.glowOpacity = Math.sin(Date.now() * 0.001 + leaf.x) * 0.05 + 0.1
+
+        // Reset if leaf goes off screen
+        if (leaf.y > canvas.height + leaf.size) {
+          leaf.y = -leaf.size * 2
+          leaf.x = Math.random() * canvas.width
+        }
+
+        drawLeaf(leaf)
+      })
+
+      requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    return () => {
+      window.removeEventListener("resize", resizeCanvas)
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+}
+
