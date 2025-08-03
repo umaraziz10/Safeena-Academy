@@ -10,6 +10,8 @@ import { fadeIn } from "../variant"
 
 type FormType = "login" | "register"
 
+console.log("NEXT_PUBLIC_BACKEND_BASE_URL:", process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
+
 export default function LoginPage() {
   const [formType, setFormType] = useState<FormType>("login")
   const [showPassword, setShowPassword] = useState(false)

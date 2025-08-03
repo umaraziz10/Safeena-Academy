@@ -97,7 +97,7 @@ exports.register = async (req, res) => {
               <p>Hello,</p>
               <p>Thank you for registering at Safeena Academy!</p>
               <p>Please click the button below to verify your email address and complete your registration:</p>
-              <a href='http://${process.env.BACK_END_URL}/auth/verify?token=${token}' class="btn" style="color: #ffffff">Verify Your Email</a>
+              <a href='${process.env.BACK_END_URL}/auth/verify?token=${token}' class="btn" style="color: #ffffff">Verify Your Email</a>
             </div>
             <div class="footer">
               <p>If you did not register for Safeena Academy, please ignore this email.</p>
@@ -161,7 +161,7 @@ exports.verifyEmail = async (req, res) => {
       user.isVerified = true;
       await user.save();
 
-      return res.redirect(`http://${process.env.FRONT_END_URL}/Login`);
+      return res.redirect(`${process.env.FRONT_END_URL}/Login`);
     } catch (error) {
       console.error(error);
       res.status(400).json({ message: 'Invalid or expired token' });
@@ -197,7 +197,7 @@ exports.verifyEmail = async (req, res) => {
   
   Please click the link below to reset your password:
   
-  http://${process.env.BACK_END_URL}/auth/reset-password?token=${token}
+  ${process.env.BACK_END_URL}/auth/reset-password?token=${token}
   
   If you did not request a password reset, please ignore this email.
   
@@ -264,7 +264,7 @@ exports.verifyEmail = async (req, res) => {
   
   Please click the link below to verify your email:
   
-  http://${process.env.BACK_END_URL}/auth/verify?token=${token}
+  ${process.env.BACK_END_URL}/auth/verify?token=${token}
   
   If you did not register, please ignore this email.
   

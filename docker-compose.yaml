@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: db
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: safeena_academy
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3309:3306
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    
+
+  backend:
+    container_name: backend
+    build: ./server
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      - DB_USERNAME=user
+      - DB_PASSWORD=password
+      - DB_NAME=safeena_academy
+      - DB_HOST=db
+      - DB_PORT=3306
+      - JWT_SECRET=your_jwt_secret
+      - EMAIL_USER=safeenaacademy@gmail.com
+      - EMAIL_PASS=aaieshesbsxorlrd
+      - FRONT_END_URL=http://localhost:3000
+      - BACK_END_URL=http://localhost:5000
+    depends_on:
+      - db
+  client:
+    build: ./client
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_BASE_URL=http://localhost:5000
+    depends_on:
+      - backend
+
+volumes:
+  mysqldata: {}

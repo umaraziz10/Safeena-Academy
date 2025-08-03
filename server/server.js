@@ -36,13 +36,28 @@ app.use((err, req, res, next) => {
 });
 
 // Test connection to database
-sequelize.authenticate()
-  .then(() => {
-    console.log('Database Successfully Connected ');
-  })
-  .catch(err => {
-    console.error('Database Connection Error:', err);
-  });
+// sequelize.authenticate()
+//   .then(() => {
+//     console.log('Database Successfully Connected ');
+//   })
+//   .catch(err => {
+//     console.error('Database Connection Error:', err);
+//   });
+async function connectWithRetry() {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Database Successfully Connected');
+  } catch (err) {
+    console.error(`❌ Database Connection Failed (${retries + 1}/${MAX_RETRIES}):`, err.message);
+    retries++;
+    if (retries < MAX_RETRIES) {
+      setTimeout(connectWithRetry, 3000); // coba lagi setelah 3 detik
+    } else {
+      console.error('🚫 Could not connect to the database. Exiting.');
+    }
+  }
+}
+connectWithRetry();
 
 // Server listen
 const PORT = process.env.PORT || 5000;
